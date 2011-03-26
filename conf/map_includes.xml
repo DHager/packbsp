@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mapIncludes>
+    <!--
+    Each include element defines a resource that may be included with a map
+    that is not directly findable by other means.
+
+    %m : The map filename, without the ".bsp" ending
+    %l : A language string (as standardized by Steam
+
+    Valid types are:
+        soundscape
+        particles
+        material
+        plain
+
+    Use plain when in doubt.
+    -->
+    <include id="soundscape"
+             path="scripts/soundscapes_%m.txt" type="soundscape"/>
+    <include id="particlemanifest"
+             path="maps/%m_particles.txt" type="particles"/>
+    <include id="ain"
+             path="maps/graphs/%m.ain" type="plain"/>
+    <include id="nav"
+             path="maps/%m.nav" type="plain"/>
+    <include id="description"
+             path="maps/%m.txt" type="plain"/>
+    <include id="international_description"
+             path="maps/%m_%l.txt" type="plain"/>
+    <include id="photos"
+             path="materials/vgui/maps/menu_photos_%m.vmt" type="material"/>
+    <include id="overview"
+             path="materials/overviews/%m.vmt" type="material"/>
+    <include id="overview_text"
+             path="resource/overviews/%m.txt" type="plain"/>
+    <include id="radar"
+             path="materials/overviews/%m_radar.vmt" type="material"/>
+    <include id="commentary"
+             path="maps/%m_commentary.txt" type="plain"/>
+    <!-- To do: Should soundcaches be included? Are there desired for some games but not others? -->
+
+    <!--
+    Each "game" definition describes a set of includes which will be used, and
+    may also reference a "parent" definition which will also be consulted.
+
+    The naming convention "game:x" is used to designate games based on their
+    name shown in the Source SDK, while "engine:x" is used to refer to shared
+    features of engines which those games are based upon.
+    -->
+    <set name=":base">
+        <includeIds>description international_description</includeIds>
+    </set>
+
+    <set name="engine:ep1" parent=":base">
+        <includeIds>commentary</includeIds>
+    </set>
+
+    <set name="engine:source2007" parent="engine:ep1">
+        <includeIds>soundscape</includeIds>
+    </set>
+
+    <set name="engine:orangebox" parent="engine:source2007">
+        <includeIds>soundscape particlemanifest </includeIds>
+    </set>
+
+    <set name="game:Team Fortress 2" parent="engine:orangebox">
+        <includeIds>nav photos</includeIds>
+    </set>
+
+    <set name="game:Counter-Strike: Source" parent="engine:orangebox">
+        <includeIds>nav ain overview overview_text radar</includeIds>
+    </set>
+
+    <set name="game:Day of Defeat: Source" parent="engine:orangebox">
+        <includeIds>nav ain overview overview_text</includeIds>
+    </set>
+</mapIncludes>
+

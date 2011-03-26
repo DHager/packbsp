@@ -1,0 +1,13 @@
+"VertexLitGeneric"
+{
+	// This is a contrived texture only meant for unit tests. It's not actually valid.
+        // ... At least not in ways this software is designed to detect.
+
+	"$basetexture"	"test_base"	
+	"$lightwarptexture" "test_lightwarp"
+        
+        "$basetexture2" "test_base2"
+        "$fallbackmaterial" "test_fallback"
+	
+
+}

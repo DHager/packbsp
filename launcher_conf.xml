@@ -1,0 +1,36 @@
+<launch4jConfig>
+  <dontWrapJar>true</dontWrapJar>
+  <headerType>gui</headerType>
+  <jar>app\packbsp.jar</jar>
+  <outfile>packbsp.exe</outfile>
+  <errTitle>PackBSP</errTitle>
+  <cmdLine></cmdLine>
+  <chdir>.</chdir>
+  <priority>normal</priority>
+  <downloadUrl>http://java.com/download</downloadUrl>
+  <supportUrl>http://technofovea.com/blog/projects/packbsp/support</supportUrl>
+  <customProcName>false</customProcName>
+  <stayAlive>false</stayAlive>
+  <manifest></manifest>
+  <icon>.\src\main\resources\com\technofovea\packbsp\gui2\resources\packbsp.ico</icon>
+  <jre>
+    <path></path>
+    <minVersion>1.5.0</minVersion>
+    <maxVersion></maxVersion>
+    <jdkPreference>preferJre</jdkPreference>
+    <initialHeapSize>50</initialHeapSize>
+    <maxHeapSize>512</maxHeapSize>
+  </jre>
+  <versionInfo>
+    <fileVersion>2.0.5.0</fileVersion>
+    <txtFileVersion>2.0.5</txtFileVersion>
+    <fileDescription>PackBSP analyzes and packages custom content in Source maps</fileDescription>
+    <copyright>2011 Darien Hager</copyright>
+    <productVersion>2.0.5.0</productVersion>
+    <txtProductVersion>2.0.5</txtProductVersion>
+    <productName>PackBSP</productName>
+    <companyName></companyName>
+    <internalName>packbsp</internalName>
+    <originalFilename>packbsp.exe</originalFilename>
+  </versionInfo>
+</launch4jConfig>

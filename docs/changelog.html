@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+	<title>PackBSP Changelog</title>
+	<link rel="stylesheet" href="styles.css" type="text/css"/>
+</head>
+<body class="changelog-doc">
+
+<div class="revision">
+	<h1>Version 2.0.5</h1>
+	<div class="release-date">Released March <sup>25th</sup> 2011</div>
+	<p>This release marks the open-sourcing of PackBSP!</p>
+	<ul>
+		<li>Added support for $ambientocclusiontexture</li>
+                <li>
+                    Removed dependency on jRegistryKey after it caused start-up problems for some users, in favor of a home-grown solution.
+                </li>
+                <li>Cleaned up codebase and build process for open-sourcing.</li>
+	</ul>
+	<h2>Known issues:</h2>
+	<ul>
+            <li>(Same as 2.0.4)</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 2.0.4</h1>
+	<div class="release-date">Released Nov <sup>6th</sup> 2010</div>
+	<p>This release is primarily small bug-fixes. Unfortunately,
+	screening out non-used static-prop skins is still not working until I
+	puzzle out more of the MDL format, sorry.</p>
+	<ul>
+		<li>Feature: Tries to auto-detect the Steam directory from the
+		Windows Registry.</li>
+		<li>Fix: Issue where if the same file exists in the game
+		directory and in the GCFs, it was being unnecessarily packed, even
+		if the file content is identical.
+		Now such "harmless duplicates" are ignored and not
+		packed. (This is particularly important for TF2 maps using the old
+		Swamp Pack assets became officially adopted.)</li>
+		<li>Fix: Issue where model-skin paths contained an extra slash
+		due to how the QC options where written prior to compile.</li>
+		<li>Fix: VMTs legitimately provided in place of SPR files are now
+		parsed correctly to find depended-upon materials/textures.</li>
+		<li>Fix: Clientregistry.blob is no longer directly read, but
+		instead copied to a temporary file to avoid conflicts with
+		concurrent Steam operations. This can still fail if Steam is in the
+		middle of updating or downloading game data, but the error message
+		should be much clearer now.</li>
+		<li>Fix: Upgraded to use HlLib 2.4.0, fixing an issue where HlLib
+		could not extract from GCFs over 4gb in size.</li>
+	</ul>
+	<h2>Known issues:</h2>
+	<ul>
+		<li>"Locked" variations of TF2 control-point hud
+		icons (ending in _locked.vmt) are not discovered for
+		team_control_point. This is due to hidden behavior of the TF2
+		engine, and will require additional work to add "plug-ins"
+		that can solve this in an extensible manner.</li>
+		<li>Textures that are needed for custom particles are not
+		detected. This will require more work to parse PCF files.</li>
+	</ul>
+</div>
+
+<div class="revision">
+	
+	<h1>Version 2.0.3</h1>
+	<div class="release-date">Released August 13<sup>th</sup> 2010</div>
+	<ul>
+		<li>Due to discovering an unresolved bug in model-parsing, <b>all</b>
+		materials for a model are now packed, even if that model is static
+		and some might not be used. This temporary workaround potentially
+		increases the file-size of maps but does not run the risk of missing
+		textures.</li>
+		<li>Handles model-gibs (ragdoll and rigid) for non-static models,
+		through parsing the .phy files.</li>
+		<li>Handles models' $includemodel settings, to pull in shared
+		animations and sequences.</li>
+		<li>Support for special-case entities:
+		<ul>
+			<li>env_screenoverlay</li>
+			<li>material_modify_control</li>
+			<li>trigger_vphysics_motion</li>
+		</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="revision">
+	
+	<h1>Version 2.0.2</h1>
+	<div class="release-date">Released July 27<sup>th</sup> 2010</div>
+	<ul>
+		<li>Added new configuration file for map-includes such as map
+		"radar" textures. </li>
+		
+		<li>Fixed not catching $hdrbasetexture from sky-box materials.</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 2.0.1</h1>
+	<div class="release-date">Released July 20<sup>th</sup> 2010</div>
+	<ul>
+		<li>Fixed issue where infodecal and info_projecteddecal
+		dependencies were not being detected.</li>
+	</ul>
+</div>
+
+<div class="revision">
+	
+	<h1>Version 2.0</h1>
+	<div class="release-date">Released July 13<sup>th</sup> 2010</div>
+	<ul>
+		<li>Program recovers better from
+		corrupt/blank SDK configurations.</li>
+		<li>Allows renamed Steam directory</li>
+		<li>Default GUI logging is less
+		verbose, enabled a check-box to regain old behavior.</li>
+		<li>Replaced graphic placeholders and
+		icons with better images.</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 2 Beta 3</h1>
+	<div class="release-date">Released Jun 17<sup>th</sup> 2010</div>
+	<ul>
+		<li>VDF parser is more lenient, in
+		order to accept certain particle manifests.</li>
+		<li>Information on material properties
+		(like $basetexture) is now in a user-editable config file.</li>
+		<li>Fixed too-small error screen for
+		packing-pair issues.</li>
+		<li>Added support for NAV files along
+		with AIN files.</li>
+		<li>Added placeholder for
+		splash-screen.</li>
+		<li>Updated placeholder image for
+		help-about.</li>
+		<li>Added placeholder icon (credit to
+		deleket on DeviantArt.)</li>
+		<li>Rearranged file structure to
+		encourage use of .exe launcher.</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 2 Beta 2</h1>
+	<div class="release-date">Released Jun 14<sup>th</sup>, 2010</div>
+	<ul>
+		<li>Should now support 64-bit systems.</li>
+		<li>New EXE launcher via launch4j</li>
+		<li>Upgraded to use HlLib 2.3.0
+		(Thanks for including a 64-bit binary, Nem!)</li>
+		<li>Log window pops up on error</li>
+		<li>Log event types are color-coded</li>
+		<li>Packing-pair interface now has
+		built-in browse functionality</li>
+		<li>Fixed an issue where log table was
+		being modified by non-EDT logging thread</li>
+		<li>Less-strict error raising for a
+		case where a Valve patch left SDK in broken state</li>
+		<li>Fixed a scroll-to-end bug in the
+		log frame involving a repaint race condition</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 2 Beta 1</h1>
+	<div class="release-date">Released Jun 10<sup>th</sup>, 2010</div>
+	<ul>
+		<li>Significant rewrite of core
+		engine.</li>
+		<li>Uses FGD files to determine map
+		dependencies</li>
+		<li>Able to read the Source SDK
+		launcher files, providing a consistent and automatic interface for
+		choosing work contexts.</li>
+	</ul>
+</div>
+	
+<div class="revision">
+	<h1>Version 1.02</h1>
+	<ul>
+		<li>Fix: Performance issue where model
+		data wasn't being appropriately cached and shared</li>
+		<li>Fix: Handles _wvt_patch files,
+		using a custom blend texture on a displacement is now handled
+		gracefully.</li>
+		<li>Better handling for multi-typed
+		entity dependencies, such as env_sprite using either VMT or SPR
+		files.</li>
+		<li>Added Support for dependencies on
+		entities:
+		<ul>
+			<li>env_shooter</li>
+			<li>env_sprite_oriented</li>
+			<li>env_smoketrail</li>
+			<li>prop_dynamic_ornament</li>
+			<li>prop_door_rotating</li>
+		</ul>
+		</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 1.01</h1>
+	<div class="release-date">Released Dec 1<sup>st</sup>, 2009</div> 
+	
+	<ul>
+		<li>Writes a very detailed debug log
+		file on each run called packbsp_debug.log</li>
+		<li>No longerb uses VbspInfo, does its
+		own parsing of map binary structure</li>
+		<li>Avoids packing unnecessary skins
+		for prop_static models. Dynamic and physics models still have all
+		possible skins packed, since it is difficult to determine that their
+		skins cannot be altered by map logic at runtime.</li>
+		<li>Properly searches model paths to
+		determine the correct skin being referenced.</li>
+		<li>Fix: Includes missing model .phy,
+		.vtx, and .vvd files.</li>
+		<li>Fix: Correctly includes overlays</li>
+		<li>Fix: Includes ambient_generic
+		sounds</li>
+		<li>Fix: Includes AIN nav-graphs</li>
+		<li>Fix: Includes TF2 map pictures</li>
+		<li>Fix: Includes map descriptions (in
+		a variety of languages)</li>
+	</ul>
+</div>
+
+	<div class="revision">
+	<h1>Version 1.00</h1>
+	<div class="release-date">Released Nov 5<sup>th</sup>, 2009</div> 
+	
+	<ul>
+		<li>Basic GUI interface around
+		previous command-line functionality</li>
+		<li>Parses MDL files and includes VMT
+		dependencies for them</li>
+		<li>Now detects and ignores cubemaps</li>
+		<li>Fix for an incompatible BspZip
+		option when using the ep1 SDK</li>
+		<li>Better error message when
+		ClientRegistry is unavailable due to steam updates</li>
+	</ul>
+</div>
+
+<div class="revision">
+	<h1>Version 0.99 Alpha</h1>
+	<div class="release-date">Released Oct 30<sup>th</sup> 2009</div>
+	<ul>
+		<li>&lt;Initial Release&gt;</li>
+	</ul>
+</div>
+
+</body>
+</html>

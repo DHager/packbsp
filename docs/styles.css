@@ -1,0 +1,7 @@
+.changelog-doc .revision {
+border-top:2px inset blue;	
+}
+
+.changelog-doc div.release-date { 
+color:blue;
+}
