@@ -1,32 +1,55 @@
+
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.technofovea</groupId>
     <artifactId>packbsp</artifactId>
     <packaging>jar</packaging>
-    <version>2.0.5</version>
+    <version>2.0.6-SNAPSHOT</version>
     <name>PackBsp</name>
+
+
+
+    <repositories>
+        <repository>
+            <id>dhager-github</id>
+            <name>DHager's Github Maven Repository</name>
+            <url>http://dhager.github.com/mvn-repo/releases</url>
+        </repository>
+                
+        <repository>
+           <!-- Needed for some GUI libs which otherwise come along with Netbeans -->
+            <id>maven2-repository.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2</url>
+        </repository>
+    </repositories>
+
+    <distributionManagement>
+        <repository>
+            <!--
+            This does not reference a "real" maven repository, but instead
+            a local folder which is externally managed and uploaded through
+            other means.
+            -->
+            <name>Local repository for later upload (releases)</name>
+            <id>temp-repo</id>
+            <url>file://${basedir}/../mvn-repo/releases</url>
+        </repository>
+        <snapshotRepository>
+            <!--
+            This does not reference a "real" maven repository, but instead
+            a local folder which is externally managed and uploaded through
+            other means.
+            -->
+            <name>Local repository for later upload (snapshots)</name>
+            <id>temp-repo-snapshots</id>
+            <url>file://${basedir}/../mvn-repo/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <build>
         <plugins>
-            <!-- Plugin for generating code based on XSD. Instead we're using annotations now. -->
-            <!--
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>jaxb2-maven-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>xjc</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <packageName>com.technofovea.packbsp.generated</packageName>
-                </configuration>
-            </plugin>
-
-            -->
-
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -92,28 +115,33 @@
                 </executions>
 
             </plugin>
-            <!--
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-resources-plugin</artifactId>
-                <version>2.2</version>
-                <configuration>
-                    <encoding>${project.build.sourceEncoding}</encoding>
-                </configuration>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
-            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
 
-    <repositories>
-        <!-- Needed for some GUI libs which otherwise come along with Netbeans -->
-        <repository>
-          <id>maven2-repository.java.net</id>
-          <name>Java.net Repository for Maven</name>
-          <url>http://download.java.net/maven/2</url>
-        </repository>
-    </repositories>
-    
     <dependencies>
 
         <dependency>
@@ -143,28 +171,28 @@
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>jhllib</artifactId>
-            <version>1.2</version>
+            <version>1.3.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-common</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-parsers</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-binary</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.1</version>
             <scope>compile</scope>
         </dependency>
 
