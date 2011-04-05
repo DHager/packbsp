@@ -6,6 +6,7 @@
     <packaging>jar</packaging>
     <version>2.0.5</version>
     <name>PackBsp</name>
+    
     <build>
         <plugins>
             <!-- Plugin for generating code based on XSD. Instead we're using annotations now. -->
@@ -106,6 +107,12 @@
     </build>
 
     <repositories>
+        <repository>
+            <id>dhager-github</id>
+            <name>DHager's Github Maven Repository</name>
+            <url>http://dhager.github.com/mvn-repo/releases</url>
+        </repository>
+
         <!-- Needed for some GUI libs which otherwise come along with Netbeans -->
         <repository>
           <id>maven2-repository.java.net</id>
@@ -143,28 +150,28 @@
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>jhllib</artifactId>
-            <version>1.2</version>
+            <version>1.3.1</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-common</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-parsers</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-binary</artifactId>
-            <version>1.2-SNAPSHOT</version>
+            <version>1.2.2-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
 
