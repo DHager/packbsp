@@ -13,7 +13,7 @@ Building
 local repository. (Try `mvn clean install`)
 3. From jhllib, copy `HLLib_32.dll` and `HLLib_64.dll` to the PackBSP's root
 directory. (Having them there makes it easier to do debugging and unit tests.)
-In addition, copy over `LICENSE.txt`, renaming it `hllib_license.txt`.
+In addition, copy over `hllib_license.txt`, renaming it `hllib_license.txt`.
 4. Download [hl2parse](http://github.com/DHager/hl2parse) and install it to your
 local repository.
 5. (Optional) If you need to create a new `.exe` launcher, download

@@ -3,117 +3,13 @@
 
     <id>dist</id>
     <formats>
-        <format>dir</format>
+        <format>zip</format>
     </formats>
-
-    <!--
-  <includeBaseDirectory/>
-  <baseDirectory/>
-
-  <includeSiteDirectory/>
-  <containerDescriptorHandlers>
-    <containerDescriptorHandler>
-      <handlerName/>
-      <configuration/>
-    </containerDescriptorHandler>
-  </containerDescriptorHandlers>
-  <moduleSets>
-    <moduleSet>
-      <includeSubModules/>
-      <includes/>
-      <excludes/>
-      <sources>
-        <fileSets>
-          <fileSet>
-            <directory/>
-            <lineEnding/>
-            <filtered/>
-            <useStrictFiltering/>
-            <useDefaultExcludes/>
-            <outputDirectory/>
-            <includes/>
-            <excludes/>
-            <fileMode/>
-            <directoryMode/>
-          </fileSet>
-        </fileSets>
-        <includeModuleDirectory/>
-        <excludeSubModuleDirectories/>
-        <outputDirectoryMapping/>
-        <useStrictFiltering/>
-        <useDefaultExcludes/>
-        <outputDirectory/>
-        <includes/>
-        <excludes/>
-        <fileMode/>
-        <directoryMode/>
-      </sources>
-      <binaries>
-        <attachmentClassifier/>
-        <includeDependencies/>
-        <dependencySets>
-          <dependencySet>
-            <outputFileNameMapping/>
-            <unpack/>
-            <unpackOptions>
-              <includes/>
-              <excludes/>
-              <filtered/>
-            </unpackOptions>
-            <scope/>
-            <useProjectArtifact/>
-            <useProjectAttachments/>
-            <useTransitiveDependencies/>
-            <useTransitiveFiltering/>
-            <useStrictFiltering/>
-            <useDefaultExcludes/>
-            <outputDirectory/>
-            <includes/>
-            <excludes/>
-            <fileMode/>
-            <directoryMode/>
-          </dependencySet>
-        </dependencySets>
-        <unpack/>
-        <unpackOptions>
-          <includes/>
-          <excludes/>
-          <filtered/>
-        </unpackOptions>
-        <outputFileNameMapping/>
-        <useStrictFiltering/>
-        <useDefaultExcludes/>
-        <outputDirectory/>
-        <includes/>
-        <excludes/>
-        <fileMode/>
-        <directoryMode/>
-      </binaries>
-    </moduleSet>
-  </moduleSets>
-  -->
-
-  <!--
-  <fileSets>
-    <fileSet>
-      <directory/>
-      <lineEnding/>
-      <filtered/>
-      <useStrictFiltering/>
-      <useDefaultExcludes/>
-      <outputDirectory/>
-      <includes/>
-      <excludes/>
-      <fileMode/>
-      <directoryMode/>
-    </fileSet>
-  </fileSets>
-  -->
 
     <fileSets>
         <fileSet>
             <directory>docs</directory>
-            <outputDirectory>.</outputDirectory>
+            <outputDirectory></outputDirectory>
             <includes>
                 <include>styles.css</include>
                 <include>readme.html</include>
@@ -139,80 +35,18 @@
     <files>
         <file>
             <source>target/${project.build.finalName}.jar</source>
-            <outputDirectory>./app</outputDirectory>
+            <outputDirectory>app</outputDirectory>
             <destName>packbsp.jar</destName>
             <fileMode>0644</fileMode>
         </file>
     </files>
 
-    <!--
-  <files>
-    <file>
-      <source/>
-      <outputDirectory/>
-      <destName/>
-      <fileMode/>
-      <lineEnding/>
-      <filtered/>
-    </file>
-  </files>
-
-  -->
-
     <dependencySets>
         <dependencySet>
-            <outputDirectory>./app/lib</outputDirectory>
+            <outputDirectory>app/lib</outputDirectory>
             <scope>runtime</scope>
             <useProjectArtifact>False</useProjectArtifact>
         </dependencySet>
     </dependencySets>
-    <!--
-  <dependencySets>
-    <dependencySet>
-      <outputFileNameMapping/>
-      <unpack/>
-      <unpackOptions>
-        <includes/>
-        <excludes/>
-        <filtered/>
-      </unpackOptions>
-      <scope/>
-      <useProjectArtifact/>
-      <useProjectAttachments/>
-      <useTransitiveDependencies/>
-      <useTransitiveFiltering/>
-      <useStrictFiltering/>
-      <useDefaultExcludes/>
-      <outputDirectory/>
-      <includes/>
-      <excludes/>
-      <fileMode/>
-      <directoryMode/>
-    </dependencySet>
-  </dependencySets>
-  -->
-
-  <!--
-  <repositories>
-    <repository>
-      <includeMetadata/>
-      <groupVersionAlignments>
-        <groupVersionAlignment>
-          <id/>
-          <version/>
-          <excludes/>
-        </groupVersionAlignment>
-      </groupVersionAlignments>
-      <scope/>
-      <useStrictFiltering/>
-      <useDefaultExcludes/>
-      <outputDirectory/>
-      <includes/>
-      <excludes/>
-      <fileMode/>
-      <directoryMode/>
-    </repository>
-  </repositories>
-  -->
-    <componentDescriptors/>
+   
 </assembly>
