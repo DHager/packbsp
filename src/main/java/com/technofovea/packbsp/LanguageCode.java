@@ -13,6 +13,10 @@
 package com.technofovea.packbsp;
 
 /**
+ * Language codes used by the Source engine for I18N purposes.
+ *
+ * Note that values schinese and tchinese are intentionally similar, they
+ * represent two different character-sets / writing systems.
  *
  * @author Darien Hager
  */

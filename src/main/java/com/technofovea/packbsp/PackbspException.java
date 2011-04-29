@@ -13,7 +13,9 @@
 package com.technofovea.packbsp;
 
 /**
- *
+ * Thrown when an error occurs in PackBSP which can be caught and recovered
+ * -from at a fairly high level in the application. Often used in conjunction
+ * with error dialogs shown to the user.
  * @author Darien Hager
  */
 public class PackbspException extends Exception{

@@ -10,9 +10,6 @@
  * Permissions beyond the scope of this license may be available
  * at http://technofovea.com/ .
  */
-/*
- * 
- */
 package com.technofovea.packbsp;
 
 import java.io.ByteArrayOutputStream;
@@ -33,7 +30,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * A utility class to query values from the Windows Registry, via the
+ * command-line and reg.exe program.
+ * 
  * @author Darien Hager
  */
 public class WindowsRegistryChecker {
@@ -118,14 +117,4 @@ public class WindowsRegistryChecker {
         }
     }
 
-    public static void main(String[] args) {
-        WindowsRegistryChecker c = new WindowsRegistryChecker();
-        String result;
-        try {
-            result = c.getKey("HKCU\\Software\\Valve\\Steam\\KnownCachesHash");
-            System.out.println(result);
-
-        } catch (IOException ex) {
-        }
-    }
 }

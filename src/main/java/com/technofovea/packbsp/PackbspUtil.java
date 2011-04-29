@@ -10,12 +10,8 @@
  * Permissions beyond the scope of this license may be available
  * at http://technofovea.com/ .
  */
-/*
- * 
- */
 package com.technofovea.packbsp;
 
-import com.technofovea.packbsp.packaging.ExternalController;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -26,7 +22,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * Miscellaneous utility methods.
+ * 
  * @author Darien Hager
  */
 public class PackbspUtil {
@@ -35,6 +32,14 @@ public class PackbspUtil {
     private final static String steamRegistryPath = "HKCU\\Software\\Valve\\Steam\\SteamPath";
     private final static String steamDefaultGuess = "c:\\program files\\valve\\steam\\";
 
+    /**
+     * Efficiently copies a given file, returning a temporary copy which will be
+     * removed when execution finishes.
+     * 
+     * @param source Source file to copy.
+     * @return The copied file.
+     * @throws IOException
+     */
     public static final File createTempCopy(File source) throws IOException {
         String ext = FilenameUtils.getExtension(source.getName());
         File dest = File.createTempFile("packbsp_temp_", "." + ext);
@@ -47,6 +52,12 @@ public class PackbspUtil {
         return dest;
     }
 
+    /**
+     * Attempts to guess the directory in which a user has installed Steam,
+     * checking the Windows Registry.
+     *
+     * @return The directory where Steam is probably installed.
+     */
     public static final File guessSteamDir() {
 
         /* 

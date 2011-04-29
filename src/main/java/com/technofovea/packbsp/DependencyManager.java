@@ -19,7 +19,8 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- *
+ * Offers a convenient interface for indirectly managing {@link DependencyItem}
+ * objects using path strings.
  * @author Darien Hager
  */
 public class DependencyManager {

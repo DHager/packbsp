@@ -24,7 +24,11 @@ import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 
 /**
- * Represents a dependency which
+ * Represents a dependency for packing which has either a fixed path or else a
+ * path that uses wildcards to indicate that it is constructed form the map-name
+ * or a localization code.
+ *
+ * @see LanguageCode
  * @author Darien Hager
  */
 @XmlAccessorType(XmlAccessType.NONE)

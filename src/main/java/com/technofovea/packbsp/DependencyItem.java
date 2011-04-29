@@ -12,28 +12,46 @@
  */
 package com.technofovea.packbsp;
 
-import com.technofovea.packbsp.crawling.Node;
 import java.io.File;
 
 /**
- *
+ * A dependency which PackBSP has discovered.
  * @author Darien Hager
  */
 public class DependencyItem implements Comparable<DependencyItem> {
 
+    /**
+     * How important it is for this asset to be included. Some assets are
+     * "optional" to signify that they are nowhere explicitly required and are
+     * only implicitly pulled in, often based on the map-name.
+     */
     public enum Necessity {
-
         UNKNOWN,
         REQUIRED,
         OPTIONAL;
     }
 
+    /**
+     * The status of this asset in the packing process.
+     */
     public enum Status {
 
         UNKNOWN,
+        /**
+         * Exists as part of the default installation for this game, no action required.
+         */
         STOCK,
+        /**
+         * Already present inside the map file, no action required.
+         */
         PREPACKED,
+        /**
+         * Not available.
+         */
         MISSING,
+        /**
+         * Available.
+         */
         FOUND;
     }
     Necessity necessity = Necessity.UNKNOWN;

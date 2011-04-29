@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 
 /**
- * Represents a dependency which
+ * 
  * @author Darien Hager
  */
 @XmlAccessorType(XmlAccessType.NONE)
