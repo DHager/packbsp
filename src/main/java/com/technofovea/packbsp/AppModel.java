@@ -21,8 +21,6 @@ import com.technofovea.hl2parse.registry.BlobParseFailure;
 import com.technofovea.hl2parse.registry.CdrParser;
 import com.technofovea.hl2parse.registry.ClientRegistry;
 import com.technofovea.hl2parse.registry.RegParser;
-import com.technofovea.hl2parse.vdf.GameConfigReader;
-import com.technofovea.hl2parse.vdf.GameConfigReader.Game;
 import com.technofovea.hl2parse.vdf.GameInfoReader;
 import com.technofovea.hl2parse.vdf.SloppyParser;
 import com.technofovea.hl2parse.vdf.ValveTokenLexer;
@@ -44,6 +42,10 @@ import com.technofovea.packbsp.crawling.EmptyCrawlListener;
 import com.technofovea.packbsp.crawling.Node;
 import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
+import com.technofovea.packbsp.devkits.Devkit;
+import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.GameEngine;
+import com.technofovea.packbsp.devkits.SourceSDK;
 import com.technofovea.packbsp.packaging.BspZipController;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -59,7 +61,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.ANTLRInputStream;
@@ -67,7 +68,6 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.exec.ExecuteException;
-import org.apache.commons.jxpath.JXPathException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -131,10 +131,8 @@ public class AppModel {
     private static final Logger logger = LoggerFactory.getLogger(AppModel.class);
     Phase currentPhase = Phase.STEAM;
     File _steamDirectory;
-    SdkEngine _currentEngine;
-    EnumMap<SdkEngine, File> _sdkDirectories;
+    Map<Devkit, Map<GameEngine, Set<Game>>> _gameChoices;
     CdrParser _cdr;
-    EnumMap<SdkEngine, List<Game>> _games;
     MapIncludes _includeConf;
     Set<IncludeItem> _includes;
     ClientRegistry _reg;
@@ -203,7 +201,6 @@ public class AppModel {
             throw new PackbspException("Could not parse the data within client registry blob", ex);
         }
 
-        final EnumMap<SdkEngine, File> sdkToolDirectories = new EnumMap<SdkEngine, File>(SdkEngine.class);
         final CdrParser cdr = reg.getContentDescriptionRecord();
         File steamAppData = new File(steamDir, STEAM_APP_DATA);
 
@@ -224,103 +221,34 @@ public class AppModel {
         } catch (RecognitionException ex) {
             throw new PackbspException("Is Steam running? Could not determine current Steam username from: " + steamAppData.getAbsolutePath(), ex);
         }
-        final File sdkDir;
+
+
+        /**
+         * Init supported development kits
+         */
+        Map<Devkit, Map<GameEngine, Set<Game>>> games = new HashMap<Devkit, Map<GameEngine, Set<Game>>>();
+        Set<Devkit> kits = new HashSet<Devkit>();
         try {
-            String sdkDirName = cdr.getAppFolderName(SDK_APPID);
-            sdkDir = new File(steamDir, STEAM_APPS_FOLDER + "\\" + currentUser + "\\" + sdkDirName);
-            logger.info("SDK directory detected as: {}", sdkDir.getAbsolutePath());
-
+            Devkit basic = SourceSDK.createKit(steamDir, _cdr, currentUser);
+            kits.add(basic);
         } catch (BlobParseFailure ex) {
-            throw new PackbspException("Could not parse content description record", ex);
+            logger.warn("A problem occurred checking for the Source SDK", ex);
         }
 
-        if (!sdkDir.isDirectory()) {
-            throw new PackbspException("The expected Source SDK directory could not be found: " + sdkDir.getAbsolutePath());
-        }
-
-        EnumMap<SdkEngine, List<Game>> games = new EnumMap<SdkEngine, List<Game>>(SdkEngine.class);
-        for (SdkEngine eng : SdkEngine.values()) {
-            final String engineName = eng.getDirName();
-            File engineFolder = new File(sdkDir, ENGINE_BIN + BSLASH + engineName);
-            File gameConf = new File(engineFolder, GAMEDATA_PATH);
-
-            logger.debug("Checking for games defined in in {}", gameConf);
-            sdkToolDirectories.put(eng, engineFolder);
-            if (!engineFolder.isDirectory()) {
-                logger.error("Cannot find folder for engine '" + engineName + "'. Please ensure your Source SDK is up-to-date and working.");
-                continue;
-            }
-            if (!gameConf.isFile()) {
-                logger.error("Cannot find game list for engine '" + engineName + "'. Please ensure your Source SDK is up-to-date and working. ");
-                continue;
-            }
-
-
-            List<Game> gameList = new ArrayList<Game>();
-            try {
-                // Parse each gameconfig.txt file
-                ANTLRFileStream afs = new ANTLRFileStream(gameConf.getAbsolutePath());
-                ValveTokenLexer lexer = new ValveTokenLexer(afs);
-                SloppyParser parser = new SloppyParser(new CommonTokenStream(lexer));
-                VdfRoot root = parser.main();
-                GameConfigReader greader = new GameConfigReader(root);
-                gameList.addAll(greader.getGames().values());
-
-            } catch (IOException ex) {
-                logger.error("Unable to access SDK's game-config file: " + gameConf, ex);
-                continue;
-            } catch (RecognitionException rex) {
-                logger.error("Unable to parse SDK's game-config file: " + gameConf, rex);
-                continue;
-            } catch (JXPathException jex) {
-                logger.error("Unable to parse SDK's game-config file: " + gameConf, jex);
-                continue;
-            }
-
-            if (gameList.size() > 0) {
-                games.put(eng, gameList);
-            } else {
-                logger.warn("No games were defined for engine: {}", engineName);
-            }
-        }
+        /**
+         * Populate kit-engine-game list
+         */
+        //TODO _gameChoices = populateGames(games, kits);
 
         currentPhase = Phase.GAME;
         // On success, save everything
         _reg = reg;
         _cdr = cdr;
-        _sdkDirectories = sdkToolDirectories;
         _steamDirectory = steamDir;
-        _games = games;
     }
 
-    public Map<SdkEngine, List<String>> getGameOptions() {
-        assertPhaseAfter(Phase.STEAM);
-        Map<SdkEngine, List<String>> ret = new EnumMap<SdkEngine, List<String>>(SdkEngine.class);
-        for (SdkEngine engine : _games.keySet()) {
-            List<String> gameNames = new ArrayList<String>();
-            for (Game g : _games.get(engine)) {
-                gameNames.add(g.getName());
-            }
-            ret.put(engine, gameNames);
-        }
-        return ret;
-    }
-
-    public void acceptGame(final SdkEngine engine, final String game) throws PackbspException {
+    public void acceptGame(final Game chosen) throws PackbspException {
         assertPhaseSameOrAfter(Phase.GAME);
-
-        if (!_games.keySet().contains(engine)) {
-            throw new IllegalArgumentException("SDK engine " + engine + " does not appear to be present.");
-        }
-        Game chosen = null;
-        for (Game g : _games.get(engine)) {
-            if (g.getName().equals(game)) {
-                chosen = g;
-            }
-        }
-        if (chosen == null) {
-            throw new IllegalArgumentException("Invalid game specified");
-        }
 
         // Find and load gameinfo file
         final File gameInfoPath = new File(chosen.getGameDir(), GameInfoReader.DEFAULT_FILENAME);
@@ -349,7 +277,7 @@ public class AppModel {
         _includes = new HashSet<IncludeItem>();
         try {
             _includeConf = MapIncludes.fromXml(new File("conf/map_includes.xml"));
-            _includes = _includeConf.getItems(chosen.getName(),engine.getDirName());
+            _includes = _includeConf.getItems(chosen);
         } catch (JAXBException ex) {
             throw new PackbspException("Could not read map-includes configuration file", ex);
         } catch (FileNotFoundException ex) {
@@ -357,7 +285,6 @@ public class AppModel {
         }
 
         currentPhase = Phase.SOURCE;
-        _currentEngine = engine;
         _chosenGame = chosen;
         _gameInfoData = gameInfoData;
     }
@@ -435,9 +362,9 @@ public class AppModel {
 
         spec = new FgdSpec();
         try {
-            for (File fgd : _chosenGame.getFgds()) {
+            for (File fgd : _chosenGame.getFgdFiles()) {
                 logger.info("Parsing FGD at: {}", fgd.getAbsolutePath());
-                DefaultLoader.fillSpec(fgd,spec);
+                DefaultLoader.fillSpec(fgd, spec);
             }
         } catch (IOException ex) {
             throw new PackbspException("Could not access FGD data", ex);
@@ -483,7 +410,7 @@ public class AppModel {
         };
 
         graph = new DependencyGraph();
-        startMapNode = new MapNode(_sourceCopy, _sourceBsp.getName(), spec,_includes);
+        startMapNode = new MapNode(_sourceCopy, _sourceBsp.getName(), spec, _includes);
         graph.addVertex(startMapNode);
 
         if (graphListener != null) {
@@ -585,7 +512,7 @@ public class AppModel {
             }
         }
 
-        final File sdkToolsDir = _sdkDirectories.get(_currentEngine);
+        final File sdkToolsDir = _chosenGame.getParent().getBinDir();
         final File bspzipExe = new File(sdkToolsDir, "bin/" + BSPZIP_FILENAME);
         final BspZipController bspzip = new BspZipController(bspzipExe);
         ByteArrayOutputStream resultStream = new ByteArrayOutputStream();

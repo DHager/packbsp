@@ -1,5 +1,6 @@
 package com.technofovea.packbsp.devkits;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -22,7 +23,19 @@ public interface GameEngine {
      */
     public Devkit getParent();
 
-    public String getTitle();
+    /**
+     * Returns a friendly name of this development kit for the user.
+     * @return A friendly name, such as "Source 2007".
+     */
+    @Override
+    public String toString();
+
+    /**
+     * Returns a string ID (possibly specific to PackBSP) designed to disambiguate
+     * this kit from others. Lowercase alphanumerics and underscores only.
+     * @return A string ID
+     */
+    public String getId();
 
     /**
      * Gets a list of games using this engine.
@@ -31,5 +44,7 @@ public interface GameEngine {
      * there is a problem getting game information.
      */
     public List<Game> getGames() throws UnsupportedOperationException;
+
+    public File getBinDir();
 
 }

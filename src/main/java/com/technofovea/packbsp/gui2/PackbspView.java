@@ -17,7 +17,6 @@ import com.technofovea.packbsp.gui2.logging.LogFrame;
 import com.technofovea.packbsp.AppModel;
 import com.technofovea.packbsp.PackbspException;
 import com.technofovea.packbsp.PackbspUtil;
-import com.technofovea.packbsp.SdkEngine;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowEvent;
@@ -132,10 +131,6 @@ public class PackbspView extends FrameView {
         step2panel = new javax.swing.JPanel();
         step2prev = new javax.swing.JButton();
         step2next = new javax.swing.JButton();
-        engineLabel = new javax.swing.JLabel();
-        gameLabel = new javax.swing.JLabel();
-        engineCombo = new javax.swing.JComboBox();
-        gameCombo = new javax.swing.JComboBox();
         step3panel = new javax.swing.JPanel();
         sourceFilePicker = new com.technofovea.packbsp.gui2.FilePicker();
         sourceFileLabel = new javax.swing.JLabel();
@@ -222,7 +217,7 @@ public class PackbspView extends FrameView {
                     .add(step1panelLayout.createSequentialGroup()
                         .add(steamDirLabel)
                         .add(10, 10, 10)
-                        .add(steamDirPicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 383, Short.MAX_VALUE)
+                        .add(steamDirPicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 387, Short.MAX_VALUE)
                         .add(91, 91, 91))
                     .add(org.jdesktop.layout.GroupLayout.TRAILING, step1panelLayout.createSequentialGroup()
                         .add(step1next)
@@ -255,52 +250,21 @@ public class PackbspView extends FrameView {
         step2next.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
         step2next.setName("step2next"); // NOI18N
 
-        engineLabel.setText(resourceMap.getString("engineLabel.text")); // NOI18N
-        engineLabel.setName("engineLabel"); // NOI18N
-
-        gameLabel.setText(resourceMap.getString("gameLabel.text")); // NOI18N
-        gameLabel.setName("gameLabel"); // NOI18N
-
-        engineCombo.setModel(new EngineComboModel());
-        engineCombo.setName("engineCombo"); // NOI18N
-
-        gameCombo.setModel(new GameComboModel());
-        gameCombo.setName("gameCombo"); // NOI18N
-        engineCombo.addItemListener((GameComboModel)gameCombo.getModel());
-
         org.jdesktop.layout.GroupLayout step2panelLayout = new org.jdesktop.layout.GroupLayout(step2panel);
         step2panel.setLayout(step2panelLayout);
         step2panelLayout.setHorizontalGroup(
             step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(step2panelLayout.createSequentialGroup()
                 .addContainerGap()
-                .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(step2panelLayout.createSequentialGroup()
-                        .add(step2prev)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 397, Short.MAX_VALUE)
-                        .add(step2next))
-                    .add(step2panelLayout.createSequentialGroup()
-                        .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                            .add(engineLabel)
-                            .add(gameLabel))
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-                            .add(gameCombo, 0, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .add(engineCombo, 0, 238, Short.MAX_VALUE))))
+                .add(step2prev)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 401, Short.MAX_VALUE)
+                .add(step2next)
                 .addContainerGap())
         );
         step2panelLayout.setVerticalGroup(
             step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
             .add(org.jdesktop.layout.GroupLayout.TRAILING, step2panelLayout.createSequentialGroup()
-                .addContainerGap()
-                .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(engineLabel)
-                    .add(engineCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-                    .add(gameLabel)
-                    .add(gameCombo, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 192, Short.MAX_VALUE)
+                .addContainerGap(253, Short.MAX_VALUE)
                 .add(step2panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
                     .add(step2prev)
                     .add(step2next))
@@ -343,10 +307,10 @@ public class PackbspView extends FrameView {
                     .add(step3panelLayout.createSequentialGroup()
                         .add(sourceFileLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                        .add(sourceFilePicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 495, Short.MAX_VALUE))
+                        .add(sourceFilePicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 499, Short.MAX_VALUE))
                     .add(step3panelLayout.createSequentialGroup()
                         .add(step3prev)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 397, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 401, Short.MAX_VALUE)
                         .add(step3next)))
                 .addContainerGap())
         );
@@ -430,7 +394,7 @@ public class PackbspView extends FrameView {
         errorListPanel.setLayout(errorListPanelLayout);
         errorListPanelLayout.setHorizontalGroup(
             errorListPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 539, Short.MAX_VALUE)
+            .add(jScrollPane1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 543, Short.MAX_VALUE)
         );
         errorListPanelLayout.setVerticalGroup(
             errorListPanelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -471,15 +435,15 @@ public class PackbspView extends FrameView {
                 .add(step4panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, step4panelLayout.createSequentialGroup()
                         .add(step4prev)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 244, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 248, Short.MAX_VALUE)
                         .add(step4run)
                         .add(10, 10, 10)
                         .add(step4next))
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, crawlNumbersPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, crawlNumbersPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, step4panelLayout.createSequentialGroup()
                         .add(currentNodeLabel)
                         .add(38, 38, 38)
-                        .add(currentNodeText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 445, Short.MAX_VALUE))
+                        .add(currentNodeText, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 449, Short.MAX_VALUE))
                     .add(errorListPanel, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -553,10 +517,10 @@ public class PackbspView extends FrameView {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, step5panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(step5panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .add(step5panelLayout.createSequentialGroup()
                         .add(step5prev)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 55, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 59, Short.MAX_VALUE)
                         .add(addPackButton)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                         .add(removePackButton)
@@ -627,14 +591,14 @@ public class PackbspView extends FrameView {
             .add(org.jdesktop.layout.GroupLayout.TRAILING, step6panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(step6panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
-                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                    .add(org.jdesktop.layout.GroupLayout.LEADING, jScrollPane5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .add(org.jdesktop.layout.GroupLayout.LEADING, step6panelLayout.createSequentialGroup()
                         .add(destFileLabel)
                         .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                        .add(destFilePicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 468, Short.MAX_VALUE))
+                        .add(destFilePicker, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 472, Short.MAX_VALUE))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, step6panelLayout.createSequentialGroup()
                         .add(step6prev)
-                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 397, Short.MAX_VALUE)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 401, Short.MAX_VALUE)
                         .add(step6next))
                     .add(org.jdesktop.layout.GroupLayout.LEADING, enableCustomPackCheckbox))
                 .addContainerGap())
@@ -685,7 +649,7 @@ public class PackbspView extends FrameView {
             .add(step7panelLayout.createSequentialGroup()
                 .addContainerGap()
                 .add(step7panelLayout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                    .add(congratsReminder, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 551, Short.MAX_VALUE)
+                    .add(congratsReminder, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 555, Short.MAX_VALUE)
                     .add(congratsLabel)
                     .add(step7panelLayout.createSequentialGroup()
                         .add(step7prev)
@@ -862,12 +826,8 @@ public class PackbspView extends FrameView {
     private javax.swing.JLabel destFileLabel;
     private com.technofovea.packbsp.gui2.FilePicker destFilePicker;
     private javax.swing.JCheckBox enableCustomPackCheckbox;
-    private javax.swing.JComboBox engineCombo;
-    private javax.swing.JLabel engineLabel;
     private javax.swing.JList errorList;
     private javax.swing.JPanel errorListPanel;
-    private javax.swing.JComboBox gameCombo;
-    private javax.swing.JLabel gameLabel;
     private javax.swing.JButton invalidPackDismissButton;
     private javax.swing.JLabel invalidPackLabel;
     private javax.swing.JScrollPane jScrollPane1;
@@ -1008,9 +968,7 @@ public class PackbspView extends FrameView {
 
             @Override
             protected void succeeded(Void result) {
-                Map<SdkEngine, List<String>> games = model.getGameOptions();
-                ((GameComboModel) gameCombo.getModel()).setItems(games);
-                ((EngineComboModel) engineCombo.getModel()).setItems(games.keySet());
+                //TODO populate game tree
                 moveToCard("step2");
             }
         };
@@ -1028,11 +986,11 @@ public class PackbspView extends FrameView {
             @Override
             protected Void doInBackground() throws PackbspException {
                 setTitle("Loading engine/game details");
-                SdkEngine eng = (SdkEngine) engineCombo.getSelectedItem();
-                String gameName = (String) gameCombo.getSelectedItem();
-                setMessage("Engine: " + eng + ", Game: " + gameName);
+                //SdkEngine eng = (SdkEngine) engineCombo.getSelectedItem();
+                //String gameName = (String) gameCombo.getSelectedItem();
+                //setMessage("Engine: " + eng + ", Game: " + gameName);
 
-                model.acceptGame(eng, gameName);
+                //model.acceptGame(eng, gameName);
                 return null;
             }
 

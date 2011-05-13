@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class SourceSDKEngine implements GameEngine {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceSDKEngine.class);
+
     static final String ENGINE_BIN = "bin";
     static final String GAMEDATA_PATH = "bin" + File.pathSeparator + "gameconfig.txt";
     final SourceSDK parent;
@@ -31,7 +32,8 @@ public class SourceSDKEngine implements GameEngine {
     final String displayName;
     final File engineFolder;
     final File gameConf;
-    final List<Game> gameList = new ArrayList<Game>();
+    final File binDir;
+    List<Game> gameList = null;
     boolean present = false;
 
     public SourceSDKEngine(SourceSDK parent, String dirName, String displayName) {
@@ -41,8 +43,13 @@ public class SourceSDKEngine implements GameEngine {
 
         this.engineFolder = new File(parent.sdkDir, ENGINE_BIN + File.pathSeparator + dirName);
         this.gameConf = new File(engineFolder, GAMEDATA_PATH);
+        this.binDir = new File(engineFolder,ENGINE_BIN);
 
-        Map<String,GameConfigReader.Game> readGames = Collections.emptyMap();
+
+    }
+
+    protected Map<String, GameConfigReader.Game> readGames() {
+        Map<String, GameConfigReader.Game> readGames = Collections.emptyMap();
         if (!engineFolder.isDirectory()) {
             logger.warn("Cannot find folder for engine '" + displayName + "'. Please ensure your Source SDK is up-to-date and working.");
         } else if (!gameConf.isFile()) {
@@ -67,20 +74,15 @@ public class SourceSDKEngine implements GameEngine {
                 logger.error("Unable to parse SDK's game-config file: " + gameConf, jex);
             }
         }
-        for(GameConfigReader.Game data : readGames.values()){
-            DefaultGameImpl gameObj = new DefaultGameImpl(this,data);
-            gameList.add(gameObj);
-        }
-
-
-        
+        return readGames;
     }
 
     public Devkit getParent() {
         return parent;
     }
 
-    public String getTitle() {
+    @Override
+    public String toString() {
         return displayName;
     }
 
@@ -89,6 +91,25 @@ public class SourceSDKEngine implements GameEngine {
     }
 
     public List<Game> getGames() throws UnsupportedOperationException {
+        synchronized (this) {
+            if (gameList == null) {
+                gameList = new ArrayList<Game>();
+                for (GameConfigReader.Game data : readGames().values()) {
+                    DefaultGameImpl gameObj = new DefaultGameImpl(this, data);
+                    gameList.add(gameObj);
+                }
+            }
+        }
         return Collections.unmodifiableList(gameList);
     }
+
+    public File getBinDir() {
+        return binDir;
+    }
+
+    public String getId() {
+        //TODO double-check appropriate value
+        return this.dirName;
+    }
+
 }
