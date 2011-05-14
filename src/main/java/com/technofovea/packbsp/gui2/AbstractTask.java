@@ -14,7 +14,6 @@ package com.technofovea.packbsp.gui2;
 
 import com.technofovea.packbsp.AppModel;
 import com.technofovea.packbsp.PackbspException;
-import javax.swing.SwingUtilities;
 import org.jdesktop.application.Task;
 
 public abstract class AbstractTask<A, B> extends Task<A, B> {
@@ -47,12 +46,18 @@ public abstract class AbstractTask<A, B> extends Task<A, B> {
     @Override
     protected void failed(final Throwable cause) {
 
+        String stepMessage = getMessage();
+        if(stepMessage==null){
+            stepMessage = "";
+        }else{
+            stepMessage = "\n" + stepMessage;
+        }
         if (cause instanceof IllegalArgumentException) {
             final IllegalArgumentException iae = (IllegalArgumentException) cause;
-            outer.showInvalidInputDialog("Invalid input in action:\n" + getMessage(), iae);
+            outer.showInvalidInputDialog("Invalid input in action:" +stepMessage, iae);
         } else if (cause instanceof PackbspException) {
             PackbspException pe = (PackbspException) cause;
-            outer.showErrorDialog("Unexpected error in action:\n" + getMessage(), pe);
+            outer.showErrorDialog("Unexpected error in action:" + stepMessage, pe);
         } else {
             outer.showErrorDialog("Unknown PackBSP error", cause);
         }

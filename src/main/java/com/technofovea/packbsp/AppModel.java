@@ -44,7 +44,6 @@ import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
 import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.GameEngine;
 import com.technofovea.packbsp.devkits.SourceSDK;
 import com.technofovea.packbsp.packaging.BspZipController;
 import java.io.ByteArrayOutputStream;
@@ -55,7 +54,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -131,13 +129,13 @@ public class AppModel {
     private static final Logger logger = LoggerFactory.getLogger(AppModel.class);
     Phase currentPhase = Phase.STEAM;
     File _steamDirectory;
-    Map<Devkit, Map<GameEngine, Set<Game>>> _gameChoices;
     CdrParser _cdr;
     MapIncludes _includeConf;
     Set<IncludeItem> _includes;
     ClientRegistry _reg;
     File _sourceBsp;
     File _sourceCopy;
+    List<Devkit> _kits;
     Game _chosenGame;
     GameInfoReader _gameInfoData;
     DependencyGraph _graph;
@@ -226,29 +224,38 @@ public class AppModel {
         /**
          * Init supported development kits
          */
-        Map<Devkit, Map<GameEngine, Set<Game>>> games = new HashMap<Devkit, Map<GameEngine, Set<Game>>>();
-        Set<Devkit> kits = new HashSet<Devkit>();
+        List<Devkit> kits = new ArrayList<Devkit>();
         try {
-            Devkit basic = SourceSDK.createKit(steamDir, _cdr, currentUser);
+            Devkit basic = SourceSDK.createKit(steamDir, cdr, currentUser);
             kits.add(basic);
         } catch (BlobParseFailure ex) {
             logger.warn("A problem occurred checking for the Source SDK", ex);
         }
 
-        /**
-         * Populate kit-engine-game list
-         */
-        //TODO _gameChoices = populateGames(games, kits);
 
         currentPhase = Phase.GAME;
         // On success, save everything
+        _kits = kits;
         _reg = reg;
         _cdr = cdr;
         _steamDirectory = steamDir;
     }
 
-    public void acceptGame(final Game chosen) throws PackbspException {
+    public List<Devkit> getKits() {
+        List<Devkit> copy = new ArrayList<Devkit>();
+        copy.addAll(_kits);
+        return copy;
+    }
+
+    public void acceptGame(final Game chosen) throws PackbspException, IllegalArgumentException {
         assertPhaseSameOrAfter(Phase.GAME);
+
+        if (chosen == null) {
+            throw new IllegalArgumentException("No game was selected");
+        } else if (!chosen.isPresent()) {
+            throw new PackbspException("The chosen game doesn't appear to be present or has a configuration problem.");
+        }
+
 
         // Find and load gameinfo file
         final File gameInfoPath = new File(chosen.getGameDir(), GameInfoReader.DEFAULT_FILENAME);

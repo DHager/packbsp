@@ -40,10 +40,10 @@ public interface GameEngine {
     /**
      * Gets a list of games using this engine.
      * @return A list of games.
-     * @throws UnsupportedOperationException If this engine is not present or if
+     * @throws GameConfigurationException If this engine is not present or if
      * there is a problem getting game information.
      */
-    public List<Game> getGames() throws UnsupportedOperationException;
+    public List<Game> getGames() throws GameConfigurationException;
 
     public File getBinDir();
 

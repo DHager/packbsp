@@ -20,7 +20,7 @@ public interface Devkit {
     /**
      * Returns a list of game engines this kit supports.
      * @return A list of supported GameEngines.
-     * @throws UnsupportedOperationException if this Devkit is not present or if 
+     * @throws GameConfigurationException if this Devkit is not present or if 
      * there is not enough information to determine what its engines are.
      */
     public List<GameEngine> getGameEngines() throws GameConfigurationException;

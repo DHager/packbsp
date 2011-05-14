@@ -26,7 +26,7 @@ public class SourceSDKEngine implements GameEngine {
     private static final Logger logger = LoggerFactory.getLogger(SourceSDKEngine.class);
 
     static final String ENGINE_BIN = "bin";
-    static final String GAMEDATA_PATH = "bin" + File.pathSeparator + "gameconfig.txt";
+    static final String GAMEDATA_PATH = "bin" + File.separator + "gameconfig.txt";
     final SourceSDK parent;
     final String dirName;
     final String displayName;
@@ -41,7 +41,7 @@ public class SourceSDKEngine implements GameEngine {
         this.dirName = dirName;
         this.displayName = displayName;
 
-        this.engineFolder = new File(parent.sdkDir, ENGINE_BIN + File.pathSeparator + dirName);
+        this.engineFolder = new File(parent.sdkDir, ENGINE_BIN + File.separator + dirName);
         this.gameConf = new File(engineFolder, GAMEDATA_PATH);
         this.binDir = new File(engineFolder,ENGINE_BIN);
 

@@ -43,8 +43,8 @@ public class SourceSDK implements Devkit {
     public static File getAppFolder(File steamDir, CdrParser cdr, String currentUser, int appid) throws BlobParseFailure {
         String appName = cdr.getAppFolderName(appid);
         File appDir = new File(steamDir,
-                STEAM_APPS_FOLDER + File.pathSeparator
-                + currentUser + File.pathSeparator
+                STEAM_APPS_FOLDER + File.separator
+                + currentUser + File.separator
                 + appName);
 
         return appDir;
@@ -71,9 +71,9 @@ public class SourceSDK implements Devkit {
         return TITLE;
     }
 
-    public List<GameEngine> getGameEngines() throws UnsupportedOperationException {
+    public List<GameEngine> getGameEngines() throws GameConfigurationException {
         if (!isPresent()) {
-            throw new UnsupportedOperationException("SDK is not present");
+            throw new GameConfigurationException("SDK is not present");
         }
         synchronized (this) {
             if (engines == null) {
