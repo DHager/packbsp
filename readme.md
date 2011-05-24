@@ -9,20 +9,15 @@ redistribution. It is intended as a successor to the aging PakRat utility.
 Building
 ========
 1. Install [Maven](http://maven.apache.org/) if you haven't already.
-2. Download [jhllib](http://github.com/DHager/jhllilb) and install it to your
-local repository. (Try `mvn clean install`)
-3. From jhllib, copy `HLLib_32.dll` and `HLLib_64.dll` to the PackBSP's root
-directory. (Having them there makes it easier to do debugging and unit tests.)
-In addition, copy over `hllib_license.txt`, renaming it `hllib_license.txt`.
-4. Download [hl2parse](http://github.com/DHager/hl2parse) and install it to your
-local repository.
-5. (Optional) If you need to create a new `.exe` launcher, download
+2. Download (or use `git fetch`) the PackBSP source files into a project directory.
+3. Download the [jhllib DLLs](https://github.com/DHager/jhllib/archives/master) and extract the files in it to the PackBSP root directory, so that the `.dll` files are adjacent to the `pom.xml` file. (Having them there makes it easier to do debugging and unit tests.)
+4. (Optional) If you need to create a new `.exe` launcher, download
 [Launch4J](http://launch4j.sourceforge.net/) ans open the `launcher_conf.xml`
 file with it. Then generate a new launcher that replaces `packbsp.exe`.
 
 Modifying GUI components
 --------
-GUI forms are managed using the GUI tools in [Netbeans](http://netbeans.org/),
+GUI forms are managed using the GUI tools in [Netbeans](http://netbeans.org/) 6.8 or above,
 and any `.java` file with a corresponding `.form` file should not be modified through
 any other tool, or risk inconsistencies.
 
@@ -46,4 +41,4 @@ When releasing a new version
 
 When using a new version of jhllib
 --------
-1. Update the DLLs and license to match the JAR, as detailed in the general build section
+1. Update the DLLs and license to match the JAR, as detailed in the "general build" section.
