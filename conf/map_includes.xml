@@ -13,7 +13,7 @@
         material
         plain
 
-    Use plain when in doubt.
+    The type determines whether additional dependency-checking will be done.
     -->
     <include id="soundscape"
              path="scripts/soundscapes_%m.txt" type="soundscape"/>

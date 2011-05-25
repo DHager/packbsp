@@ -58,7 +58,7 @@ public class SourceSDK implements Devkit {
         return ret;
     }
 
-    protected SourceSDK(File dir) throws BlobParseFailure {
+    protected SourceSDK(File dir){
         sdkDir = dir;
     }
 
