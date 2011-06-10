@@ -12,10 +12,16 @@
  */
 package com.technofovea.packbsp.conf;
 
+import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.GameEngine;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
+import org.jmock.Expectations;
+import org.jmock.Mockery;
+import org.jmock.integration.junit4.JUnit4Mockery;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -23,6 +29,13 @@ import org.junit.Test;
  * @author Darien Hager
  */
 public class MapIncludesTest {
+
+    Mockery context;
+
+    @Before
+    public void before() {
+        context = new JUnit4Mockery();
+    }
 
     @Test
     public void testConfig() throws Exception {
@@ -59,8 +72,28 @@ public class MapIncludesTest {
         File src = new File("conf/map_includes.xml");
         MapIncludes conf2 = MapIncludes.fromXml(src);
 
+        final GameEngine mockEngine = context.mock(GameEngine.class);
+        context.checking(new Expectations() {
 
-        Set<IncludeItem> results = conf2.getItems("Team Fortress 2", "orangebox");
+            {
+                oneOf(mockEngine).getId();
+                will(returnValue("orangebox"));
+            }
+        });
+
+        final Game mockGame = context.mock(Game.class);
+        context.checking(new Expectations() {
+
+            {
+                oneOf(mockGame).getId();
+                will(returnValue("Team Fortress 2"));
+                oneOf(mockGame).getParent();
+                will(returnValue(mockEngine));
+            }
+        });
+
+
+        Set<IncludeItem> results = conf2.getItems(mockGame);
         Set<String> actual = new HashSet<String>();
         for (IncludeItem item : results) {
             actual.addAll(item.dereference(mapname));
