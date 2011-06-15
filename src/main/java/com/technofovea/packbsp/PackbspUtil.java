@@ -35,7 +35,7 @@ public class PackbspUtil {
     private final static String steamRegistryPath = "HKCU\\Software\\Valve\\Steam\\SteamPath";
     private final static String steamDefaultGuess = "c:\\program files\\valve\\steam\\";
 
-    public static final File createTempCopy(File source) throws IOException {
+    public static File createTempCopy(File source) throws IOException {
         String ext = FilenameUtils.getExtension(source.getName());
         File dest = File.createTempFile("packbsp_temp_", "." + ext);
         dest.deleteOnExit();
@@ -47,7 +47,7 @@ public class PackbspUtil {
         return dest;
     }
 
-    public static final File guessSteamDir() {
+    public static File guessSteamDir() {
 
         /* 
          * Not efficient to create this over and over, but in this context we 

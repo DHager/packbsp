@@ -5,6 +5,7 @@ package com.technofovea.packbsp.devkits;
 
 import com.technofovea.hl2parse.registry.BlobParseFailure;
 import com.technofovea.hl2parse.registry.CdrParser;
+import com.technofovea.hl2parse.registry.ClientRegistry;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -50,9 +51,9 @@ public class SourceSDK implements Devkit {
         return appDir;
     }
 
-    public static SourceSDK createKit(File steamDir, CdrParser cdr, String currentUser) throws BlobParseFailure {
+    public static SourceSDK createKit(File steamDir, ClientRegistry reg, String currentUser) throws BlobParseFailure {
         logger.debug("Trying to retrieve SDK directory name from app-id");
-        File appDir = getAppFolder(steamDir, cdr, currentUser, APPID);
+        File appDir = getAppFolder(steamDir, reg.getContentDescriptionRecord(), currentUser, APPID);
         logger.debug("Source SDK dir detected as {}", appDir);
         SourceSDK ret = new SourceSDK(appDir);
         return ret;

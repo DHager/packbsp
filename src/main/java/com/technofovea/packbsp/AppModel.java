@@ -226,7 +226,7 @@ public class AppModel {
          */
         List<Devkit> kits = new ArrayList<Devkit>();
         try {
-            Devkit basic = SourceSDK.createKit(steamDir, cdr, currentUser);
+            Devkit basic = SourceSDK.createKit(steamDir, reg, currentUser);
             kits.add(basic);
         } catch (BlobParseFailure ex) {
             logger.warn("A problem occurred checking for the Source SDK", ex);
