@@ -14,27 +14,23 @@ import java.util.List;
  */
 class DefaultGameImpl implements Game {
 
-    final GameEngine parent;
-    private final GameConfigReader.Game data;
-    private final File infoFile;
+    final Devkit parent;
+    final GameConfigReader.Game data;
+    final File infoFile;
 
-    public DefaultGameImpl(GameEngine parent, GameConfigReader.Game data) {
+    public DefaultGameImpl(Devkit parent, GameConfigReader.Game data) {
         this.data = data;
         this.parent = parent;
         infoFile = new File(data.getGameDir(), GameInfoReader.DEFAULT_FILENAME);
     }
 
-    public GameEngine getParent() {
+    public Devkit getParent() {
         return parent;
     }
 
     @Override
     public String toString() {
         return data.getName();
-    }
-
-    public boolean isPresent() {
-        return infoFile.isFile();
     }
 
     public File getBspDir() {

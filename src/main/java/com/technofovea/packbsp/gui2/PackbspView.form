@@ -83,9 +83,12 @@
                 </Property>
                 <Property name="name" type="java.lang.String" value="steamDirPicker" noResource="true"/>
                 <Property name="selectedFile" type="java.io.File" editor="org.netbeans.modules.form.RADConnectionPropertyEditor">
-                  <Connection code="PackbspUtil.guessSteamDir()" type="code"/>
+                  <Connection code="new File(&quot;c:/program files/valve/steam/&quot;)" type="code"/>
                 </Property>
               </Properties>
+              <AuxValues>
+                <AuxValue name="JavaCodeGenerator_SerializeTo" type="java.lang.String" value="PackbspView_steamDirPicker"/>
+              </AuxValues>
             </Component>
           </SubComponents>
         </Container>

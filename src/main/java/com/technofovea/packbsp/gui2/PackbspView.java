@@ -16,7 +16,6 @@ import com.technofovea.packbsp.gui2.logging.LoggingTable;
 import com.technofovea.packbsp.gui2.logging.LogFrame;
 import com.technofovea.packbsp.AppModel;
 import com.technofovea.packbsp.PackbspException;
-import com.technofovea.packbsp.PackbspUtil;
 import com.technofovea.packbsp.devkits.Game;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
@@ -211,7 +210,7 @@ public class PackbspView extends FrameView {
         steamDirPicker.setDialogType(FilePicker.OPEN_DIALOG);
         steamDirPicker.setFileSelectionMode(FilePicker.DIRECTORIES_ONLY);
         steamDirPicker.setName("steamDirPicker"); // NOI18N
-        steamDirPicker.setSelectedFile(PackbspUtil.guessSteamDir());
+        steamDirPicker.setSelectedFile(new File("c:/program files/valve/steam/"));
 
         org.jdesktop.layout.GroupLayout step1panelLayout = new org.jdesktop.layout.GroupLayout(step1panel);
         step1panel.setLayout(step1panelLayout);

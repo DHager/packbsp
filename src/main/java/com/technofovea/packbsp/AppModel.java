@@ -44,12 +44,15 @@ import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
 import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.GameConfException;
 import com.technofovea.packbsp.devkits.SourceSDK;
+import com.technofovea.packbsp.devkits.SourceSDK.Engines;
 import com.technofovea.packbsp.packaging.BspZipController;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +69,8 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -163,6 +168,18 @@ public class AppModel {
         }
     }
 
+    static File createTempCopy(File source) throws IOException {
+        String ext = FilenameUtils.getExtension(source.getName());
+        File dest = File.createTempFile("packbsp_temp_", "." + ext);
+        dest.deleteOnExit();
+        FileInputStream fis = new FileInputStream(source);
+        FileOutputStream fos = new FileOutputStream(dest);
+        IOUtils.copy(fis, fos);
+        fis.close();
+        fos.close();
+        return dest;
+    }
+    
     /**
      *
      * @param dir
@@ -183,7 +200,7 @@ public class AppModel {
         logger.info("Creating temporary copy of registry blob to avoid read/write conflicts.");
         final File blobfile;
         try {
-            blobfile = PackbspUtil.createTempCopy(originalBlob);
+            blobfile = createTempCopy(originalBlob);
         } catch (IOException ex) {
             throw new PackbspException("Could not create temporary copy of client registry blob. Pause any game-downloads or wait for Steam to finish updating and try again.", ex);
         }
@@ -225,11 +242,16 @@ public class AppModel {
          * Init supported development kits
          */
         List<Devkit> kits = new ArrayList<Devkit>();
-        try {
-            Devkit basic = SourceSDK.createKit(steamDir, reg, currentUser);
-            kits.add(basic);
-        } catch (BlobParseFailure ex) {
-            logger.warn("A problem occurred checking for the Source SDK", ex);
+         /*
+         * Instantiate Source SDK kits
+         */
+        for (Engines e : SourceSDK.Engines.values()) {
+            try {
+                kits.add(SourceSDK.createKit(e, steamDir, reg, currentUser));
+            }
+            catch (GameConfException ex) {
+                logger.error("Problem instantiating SDK",ex);
+            }
         }
 
 
@@ -252,8 +274,6 @@ public class AppModel {
 
         if (chosen == null) {
             throw new IllegalArgumentException("No game was selected");
-        } else if (!chosen.isPresent()) {
-            throw new PackbspException("The chosen game doesn't appear to be present or has a configuration problem.");
         }
 
 
@@ -322,7 +342,7 @@ public class AppModel {
 
         File tempCopy;
         try {
-            tempCopy = PackbspUtil.createTempCopy(source);
+            tempCopy = createTempCopy(source);
         } catch (IOException ex) {
             throw new PackbspException("Unable to create a temporary copy of the source file for secure reading", ex);
         }

@@ -3,11 +3,9 @@
  */
 package com.technofovea.packbsp;
 
-import com.technofovea.packbsp.spring.NestedScope;
 import com.technofovea.packbsp.spring.PhaseFailedException;
 import com.technofovea.packbsp.spring.QuickMessages;
 import com.technofovea.packbsp.spring.SteamPhaseFactory;
-import com.technofovea.packbsp.spring.SteamPhaseFactory.SteamPhase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -43,6 +41,7 @@ public class Launcher {
             logger.error("error",pfe);
         }
         
+        //PropertiesConfiguration conf = ctx.getBean("config",PropertiesConfiguration.class); 
         
         
         /*

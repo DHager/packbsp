@@ -1,6 +1,6 @@
 package com.technofovea.packbsp.devkits;
 
-import com.technofovea.packbsp.PackbspException;
+import java.io.File;
 import java.util.List;
 
 /**
@@ -11,19 +11,23 @@ import java.util.List;
  */
 public interface Devkit {
 
-    /**
-     * Tests if the given devkit is present and supported on the system.
-     * @return True if present, false otherwise.
-     */
-    public boolean isPresent();
 
     /**
-     * Returns a list of game engines this kit supports.
-     * @return A list of supported GameEngines.
-     * @throws GameConfigurationException if this Devkit is not present or if 
-     * there is not enough information to determine what its engines are.
+     * Returns a Game object for the given key, which may be either instantiated
+     * or re-used from a past invocation.
+     * 
+     * @return The Game associated with the key, or null if the key was invalid.
+     * @throws GameConfigurationException if there was a problem creating the Game object
      */
-    public List<GameEngine> getGameEngines() throws GameConfigurationException;
+    public Game getGame(String gameKey) throws GameConfException;
+    
+    /**
+     * Returns a unique list of keys which are used to refer to specific games this kit 
+     * provides access to. These keys are *not* intended to be used for long-term
+     * identification and may be inconsistent across program executions or platforms.
+     * @return A unique list of keys to identify available games
+     */
+    public List<String> getGameKeys();
     /**
      * Returns a friendly name of this development kit for the user.
      * @return A friendly name, such as "Source Development Kit".
@@ -37,5 +41,11 @@ public interface Devkit {
      * @return A string ID
      */
     public String getId();
+    
+    /**
+     * Retrieve the location where the various executables for this kit are stored.
+     * @return 
+     */
+    public File getBinDir();
 
 }

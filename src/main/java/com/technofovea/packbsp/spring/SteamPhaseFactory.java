@@ -14,7 +14,10 @@ import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import com.technofovea.packbsp.WindowsRegistryChecker;
 import com.technofovea.packbsp.devkits.Devkit;
+import com.technofovea.packbsp.devkits.GameConfException;
+import com.technofovea.packbsp.devkits.L4D2Kit;
 import com.technofovea.packbsp.devkits.SourceSDK;
+import com.technofovea.packbsp.devkits.SourceSDK.Engines;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -82,6 +85,7 @@ public class SteamPhaseFactory implements InitializingBean {
     private static final Logger logger = LoggerFactory.getLogger(SteamPhaseFactory.class);
     NestedScope scope = null;
     File steamDir = null;
+    GameErrorListener gameErrorListener = null;
 
     public SteamPhaseFactory() {
         steamDir = guessSteamDir();
@@ -101,6 +105,14 @@ public class SteamPhaseFactory implements InitializingBean {
 
     public void setSteamDir(File steamDir) {
         this.steamDir = steamDir;
+    }
+
+    public GameErrorListener getGameErrorListener() {
+        return gameErrorListener;
+    }
+
+    public void setGameErrorListener(GameErrorListener gameErrorListener) {
+        this.gameErrorListener = gameErrorListener;
     }
 
     public void afterPropertiesSet() throws Exception {
@@ -228,14 +240,31 @@ public class SteamPhaseFactory implements InitializingBean {
 
 
         final List<Devkit> kits = new ArrayList<Devkit>();
-        try {
-            Devkit basic = SourceSDK.createKit(steamDir, reg, currentUser);
-            kits.add(basic);
-        }
-        catch (BlobParseFailure ex) {
-            logger.warn("A problem occurred checking for the Source SDK", ex);
-        }
 
+        /*
+         * Instantiate Source SDK kits
+         */
+        for (Engines e : SourceSDK.Engines.values()) {
+            try {
+                kits.add(SourceSDK.createKit(e, steamDir, reg, currentUser));
+            }
+            catch (GameConfException ex) {
+                if (gameErrorListener != null) {
+                    gameErrorListener.errorOccurred(this, ex);
+                }
+            }
+        }
+        /**
+         * Instantiate Left 4 Dead 2 kit
+         */
+        try {
+            kits.add(L4D2Kit.createKit(steamDir));
+        }
+        catch (GameConfException ex) {
+            if (gameErrorListener != null) {
+                gameErrorListener.errorOccurred(this, ex);
+            }
+        }
 
 
         // If creation successful, notify scope to invalidate old item

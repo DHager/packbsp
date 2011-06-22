@@ -1,8 +1,9 @@
 /*
  * 
  */
-package com.technofovea.packbsp.spring;
+package com.technofovea.packbsp.devkits;
 
+import com.technofovea.packbsp.spring.IntlException;
 import org.springframework.context.MessageSourceResolvable;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 
@@ -10,34 +11,34 @@ import org.springframework.context.support.DefaultMessageSourceResolvable;
  *
  * @author Darien Hager
  */
-public class PhaseFailedException extends Exception implements IntlException{
+public class GameConfException extends Exception implements IntlException{
 
     MessageSourceResolvable intlMessage;
 
-    private PhaseFailedException(Throwable cause) {
+    private GameConfException(Throwable cause) {
         super(cause);
     }
 
-    private PhaseFailedException(String message, Throwable cause) {
+    private GameConfException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    private PhaseFailedException(String message) {
+    private GameConfException(String message) {
         super(message);
     }
 
     
     
-    public static PhaseFailedException create(String defaultMessage, String code, Object... arguments){
+    public static GameConfException create(String defaultMessage, String code, Object... arguments){
         return create(defaultMessage, null, code, arguments);
     }
-    public static PhaseFailedException create(String defaultMessage, Throwable cause, String code, Object... arguments){
+    public static GameConfException create(String defaultMessage, Throwable cause, String code, Object... arguments){
         
-        PhaseFailedException ex;
+        GameConfException ex;
         if(cause != null){
-            ex= new PhaseFailedException(defaultMessage,cause);
+            ex= new GameConfException(defaultMessage,cause);
         }else{
-            ex = new PhaseFailedException(defaultMessage);
+            ex = new GameConfException(defaultMessage);
         }
         if(arguments == null){
             arguments = new Object[0];
@@ -46,7 +47,6 @@ public class PhaseFailedException extends Exception implements IntlException{
         return ex;
     }
 
-    @Override
     public MessageSourceResolvable getIntlMessage() {
         return intlMessage;
     }

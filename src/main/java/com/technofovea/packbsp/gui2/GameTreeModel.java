@@ -5,8 +5,7 @@ package com.technofovea.packbsp.gui2;
 
 import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.GameConfigurationException;
-import com.technofovea.packbsp.devkits.GameEngine;
+import com.technofovea.packbsp.devkits.GameConfException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -72,13 +71,17 @@ public class GameTreeModel implements TreeModel {
                 // Root itself is a list
                 return root;
             } else if (parent instanceof Devkit) {
-                return ((Devkit) parent).getGameEngines();
-            } else if (parent instanceof GameEngine) {
-                return ((GameEngine) parent).getGames();
+                final Devkit kit = (Devkit) parent;
+                List<String> keys =kit.getGameKeys();
+                List<Game> ret = new ArrayList<Game>();
+                for(String k:keys){
+                    ret.add(kit.getGame(k));
+                }
+                return ret;
             } else {
                 return null;
             }
-        } catch (GameConfigurationException gex) {
+        } catch (GameConfException gex) {
             logger.warn("Problem expanding tree node "+parent.toString(),gex);
             return null;
         }
