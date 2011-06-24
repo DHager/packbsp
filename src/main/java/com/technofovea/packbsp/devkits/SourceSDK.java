@@ -12,7 +12,7 @@ import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -64,7 +64,7 @@ public class SourceSDK implements Devkit {
     }
 
     public static SourceSDK createKit(Engines target, File steamDir, ClientRegistry reg, String currentUser) throws GameConfException {
-        logger.debug("Instantiating SDK for sub-engine {}",target.displayName);
+        logger.debug("Instantiating SDK for sub-engine {}", target.displayName);
         logger.debug("Trying to retrieve SDK directory name from app-id");
         File appDir;
         try {
@@ -88,9 +88,7 @@ public class SourceSDK implements Devkit {
     String title = "Source SDK";
     String id = "source_sdk";
     File gameDataPath;
-    final Map<String, GameConfigReader.Game> listedGames = new HashMap<String, GameConfigReader.Game>();
-    final List<String> listKeys = new ArrayList<String>();
-    final Map<String, Game> loadedGames = new HashMap<String, Game>();
+    final Map<GameConfigReader.Game, Game> loadedGames = new HashMap<GameConfigReader.Game, Game>();
 
     protected SourceSDK(Engines e, File engineDir, File engineBinDir) throws GameConfException {
         title += ": " + e.displayName;
@@ -113,9 +111,9 @@ public class SourceSDK implements Devkit {
             SloppyParser parser = new SloppyParser(new CommonTokenStream(lexer));
             VdfRoot root = parser.main();
             GameConfigReader greader = new GameConfigReader(root);
-            listedGames.putAll(greader.getGames());
-            listKeys.clear();
-            listKeys.addAll(listedGames.keySet());
+            for (GameConfigReader.Game g : greader.getGames()) {
+                loadedGames.put(g, null);
+            }
         }
         catch (IOException ex) {
             throw GameConfException.create("Unable to read SDK's game-config file", ex, "error.sourcesdk.cant_read_gameconfig", e.displayName, gameDataPath);
@@ -139,25 +137,41 @@ public class SourceSDK implements Devkit {
         return title;
     }
 
-    public Game getGame(String gameKey) throws GameConfException {
+    public String getGameName(Object key) {
+        if (!( key instanceof GameConfigReader.Game )) {
+            return null;
+        }
+        GameConfigReader.Game gameKey = (GameConfigReader.Game) key;
+        if (!loadedGames.containsKey(gameKey)) {
+            throw new IllegalArgumentException("Bad game key");
+        }
+        return gameKey.getName();
+    }
+    
+    
+
+    public Game getGame(Object key) throws GameConfException {
+        if (!( key instanceof GameConfigReader.Game )) {
+            return null;
+        }
+        GameConfigReader.Game gameKey = (GameConfigReader.Game) key;
+        if (!loadedGames.containsKey(gameKey)) {
+            throw new IllegalArgumentException("Bad game key");
+        }
         synchronized (loadedGames) {
             Game cached = loadedGames.get(gameKey);
             if (cached != null) {
                 return cached;
             }
-
-            GameConfigReader.Game v = listedGames.get(gameKey);
-            if (v == null) {
-                return null;
-            }
-            DefaultGameImpl gameObj = new DefaultGameImpl(this, v);
+            DefaultGameImpl gameObj = new DefaultGameImpl(this, gameKey);
             loadedGames.put(gameKey, gameObj);
             return gameObj;
         }
+
     }
 
-    public List<String> getGameKeys() {
-        return Collections.unmodifiableList(listKeys);
+    public Collection<? extends Object> getGameKeys() {
+        return Collections.unmodifiableSet(loadedGames.keySet());
     }
 
     public String getId() {

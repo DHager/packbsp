@@ -84,12 +84,11 @@ import org.slf4j.LoggerFactory;
  */
 public class AppModel {
 
-    static final String BSLASH = "\\";
     final static String CR_BLOB = "clientregistry.blob";
     final static int SDK_APPID = 211;
     final static String STEAM_APPS_FOLDER = "steamapps";
     static final String ENGINE_BIN = "bin";
-    static final String GAMEDATA_PATH = "bin" + BSLASH + "gameconfig.txt";
+    static final String GAMEDATA_PATH = "bin/gameconfig.txt";
     static final String BSPZIP_FILENAME = "bspzip.exe";
     static final String STEAM_APP_DATA = "config/SteamAppData.vdf";
 

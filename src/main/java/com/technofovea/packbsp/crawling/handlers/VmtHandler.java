@@ -14,21 +14,19 @@ package com.technofovea.packbsp.crawling.handlers;
 
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import com.technofovea.hl2parse.vdf.MaterialReader;
-import com.technofovea.hl2parse.xml.MaterialRefList;
+import com.technofovea.hl2parse.vdf.MaterialReference;
 import com.technofovea.packbsp.crawling.Edge;
 import com.technofovea.packbsp.crawling.EdgeImpl;
 import com.technofovea.packbsp.crawling.OutgoingPair;
 import com.technofovea.packbsp.crawling.nodes.MaterialNode;
 import com.technofovea.packbsp.crawling.nodes.MiscFileNode;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 
 
 
 import java.util.List;
+import java.util.Set;
 import javax.xml.bind.JAXBException;
 
 import org.apache.commons.jxpath.JXPathException;
@@ -42,40 +40,23 @@ import org.slf4j.LoggerFactory;
 public class VmtHandler extends VdfBaseParser<Edge, MaterialNode> {
 
     private static final Logger logger = LoggerFactory.getLogger(VmtHandler.class);
-    MaterialRefList defaultList;
-    MaterialRefList customList = null;
+    Set<MaterialReference> defaultList;
 
     /**
      *
      * @throws JAXBException If default XML configs for material directives could not be loaded.
      */
-    public VmtHandler() throws JAXBException {
-        File confFile = new File("conf/materials.xml");
-        defaultList = MaterialReader.getDefaultMaterialSettings();
-        if(confFile.isFile()){
-            logger.debug("Attempting to load custom material configs from {}",confFile);
-            try{
-                customList = MaterialReader.loadFromXml(new FileInputStream(confFile));
-                logger.debug("Load successful");
-            }catch(FileNotFoundException fnfe){
-                logger.error("Unable to load material config",fnfe);
-            }
-        }
-
+    public VmtHandler(Set<MaterialReference> materials) {
+        defaultList = materials;        
     }
 
     @Override
     protected List<OutgoingPair> innerParse(MaterialNode node, VdfRoot root) throws HandlingException {
         List<OutgoingPair> ret = new ArrayList<OutgoingPair>();
         try {
-            MaterialRefList matRefs = defaultList;
-            if(customList != null){
-                matRefs = customList;
-            }
-            MaterialReader vd = new MaterialReader(root,matRefs);
+            MaterialReader vd = new MaterialReader(root,defaultList);
 
             for (String path : vd.getMaterials()) {
-                // Screen out "placeholders" like "_rt_waterreflection"
                 if (!path.toLowerCase().endsWith(".vmt")) {
                     logger.debug("Skipping potential material due to wrong extension: {}", path);
                     continue;
@@ -85,13 +66,11 @@ public class VmtHandler extends VdfBaseParser<Edge, MaterialNode> {
             }
 
             for (String path : vd.getTextures()) {
-                // Screen out "placeholders" like "env_cubemap"
                 if (!path.toLowerCase().endsWith(".vtf")) {
                     logger.debug("Skipping potential texture due to wrong extension: {}", path);
                     continue;
                 }
                 ret.add(new OutgoingPair(new EdgeImpl("Texture"), new MiscFileNode(path)));
-
             }
         } catch (JXPathException e) {
             throw new HandlingException("Structure invalid", e);

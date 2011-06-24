@@ -14,6 +14,7 @@ import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import com.technofovea.packbsp.WindowsRegistryChecker;
 import com.technofovea.packbsp.devkits.Devkit;
+import com.technofovea.packbsp.devkits.Game;
 import com.technofovea.packbsp.devkits.GameConfException;
 import com.technofovea.packbsp.devkits.L4D2Kit;
 import com.technofovea.packbsp.devkits.SourceSDK;
@@ -24,7 +25,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Level;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -49,7 +54,7 @@ public class SteamPhaseFactory implements InitializingBean {
 
         public String getCurrentUser();
 
-        public List<Devkit> getKits();
+        public Map<Devkit, List<Game>> getGames();
     }
 
     protected static class SteamPhaseImpl implements SteamPhase {
@@ -57,13 +62,18 @@ public class SteamPhaseFactory implements InitializingBean {
         final File steamDir;
         final ClientRegistry registry;
         final String currentUser;
-        final List<Devkit> kits;
+        final Map<Devkit, List<Game>> games;
 
-        public SteamPhaseImpl(File steamDir, ClientRegistry registry, String currentUser, List<Devkit> kits) {
+        public SteamPhaseImpl(File steamDir, ClientRegistry registry, String currentUser, Map<Devkit, List<Game>> games) {
             this.steamDir = steamDir;
             this.registry = registry;
             this.currentUser = currentUser;
-            this.kits = new ArrayList<Devkit>(kits);
+            // Make deeply immutable copy
+            HashMap<Devkit, List<Game>> tempMap = new HashMap<Devkit, List<Game>>();
+            for(Devkit k : games.keySet()){
+                tempMap.put(k,Collections.unmodifiableList(tempMap.get(k)));
+            }
+            this.games = Collections.unmodifiableMap(tempMap);
         }
 
         public File getSteamDir() {
@@ -78,8 +88,8 @@ public class SteamPhaseFactory implements InitializingBean {
             return currentUser;
         }
 
-        public List<Devkit> getKits() {
-            return Collections.unmodifiableList(kits);
+        public Map<Devkit, List<Game>> getGames() {
+            return games;
         }
     }
     private static final Logger logger = LoggerFactory.getLogger(SteamPhaseFactory.class);
@@ -170,7 +180,7 @@ public class SteamPhaseFactory implements InitializingBean {
         return reg;
     }
 
-    protected static String getCurrentUser(File steamDir) throws PhaseFailedException {
+    protected static String detectCurrentUser(File steamDir) throws PhaseFailedException {
         final File steamAppData = new File(steamDir, "config/SteamAppData.vdf");
         final String currentUser;
         try {
@@ -201,7 +211,7 @@ public class SteamPhaseFactory implements InitializingBean {
          * do not expect many repeat invocations, if at all.
          */
         final String STEAM_REGISTRY_PATH = "HKCU\\Software\\Valve\\Steam\\SteamPath";
-        final String STEAM_DEFAULT_PATH = "c:\\program files\\valve\\steam\\";
+        final String STEAM_DEFAULT_PATH = "c:/program files/valve/steam/";
 
         WindowsRegistryChecker wrc = new WindowsRegistryChecker();
 
@@ -227,20 +237,8 @@ public class SteamPhaseFactory implements InitializingBean {
 
     }
 
-    public SteamPhase proceed() throws PhaseFailedException {
-        SteamPhase ret = null;
-        if (steamDir == null || ( !steamDir.isDirectory() )) {
-            throw PhaseFailedException.create("Invalid Steam directory", "error.input.invalid_steam_dir", steamDir);
-        }
-
-
-        final ClientRegistry reg = parseRegistry(steamDir);
-
-        final String currentUser = getCurrentUser(steamDir);
-
-
+    protected List<Devkit> loadKits(final ClientRegistry reg, final String currentUser) {
         final List<Devkit> kits = new ArrayList<Devkit>();
-
         /*
          * Instantiate Source SDK kits
          */
@@ -249,8 +247,9 @@ public class SteamPhaseFactory implements InitializingBean {
                 kits.add(SourceSDK.createKit(e, steamDir, reg, currentUser));
             }
             catch (GameConfException ex) {
+                logger.warn("Error instantiating Devkit", ex);
                 if (gameErrorListener != null) {
-                    gameErrorListener.errorOccurred(this, ex);
+                    gameErrorListener.devkitInitError(this, ex);
                 }
             }
         }
@@ -261,14 +260,49 @@ public class SteamPhaseFactory implements InitializingBean {
             kits.add(L4D2Kit.createKit(steamDir));
         }
         catch (GameConfException ex) {
+            logger.warn("Error instantiating Devkit", ex);
             if (gameErrorListener != null) {
-                gameErrorListener.errorOccurred(this, ex);
+                gameErrorListener.devkitInitError(this, ex);
             }
+        }
+        return kits;
+    }
+
+    protected Map<Devkit, List<Game>> loadGames(final List<Devkit> kits) {
+        final Map<Devkit, List<Game>> ret = new HashMap<Devkit, List<Game>>();
+        for (Devkit kit : kits) {
+            List<Game> games = new ArrayList<Game>();
+            for (Object gk : kit.getGameKeys()) {
+                Game game;
+                try {
+                    game = kit.getGame(gk);
+                    games.add(game);
+                }
+                catch (GameConfException ex) {
+                    gameErrorListener.gameInitError(this, ex);
+                }
+            }
+            ret.put(kit, games);
+
+        }
+        return ret;
+    }
+
+    public SteamPhase proceed() throws PhaseFailedException {
+        SteamPhase ret = null;
+        if (steamDir == null || ( !steamDir.isDirectory() )) {
+            throw PhaseFailedException.create("Invalid Steam directory", "error.input.invalid_steam_dir", steamDir);
         }
 
 
+        final ClientRegistry reg = parseRegistry(steamDir);
+        final String currentUser = detectCurrentUser(steamDir);
+        final List<Devkit> kits = loadKits(reg, currentUser);
+        final Map<Devkit, List<Game>> gameTree = loadGames(kits);
+
+
         // If creation successful, notify scope to invalidate old item
-        ret = new SteamPhaseImpl(steamDir, reg, currentUser, kits);
+        ret = new SteamPhaseImpl(steamDir, reg, currentUser, gameTree);
         if (( ret != null ) && ( scope != null )) {
             scope.invalidateScope();
         }

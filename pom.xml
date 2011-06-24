@@ -195,41 +195,34 @@
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-common</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-parsers</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-binary</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sf.jung</groupId>
             <artifactId>jung-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>net.sf.jung</groupId>
-            <artifactId>jung-visualization</artifactId>
-            <version>2.0</version>
+            <version>${net.sf.jung.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sf.jung</groupId>
             <artifactId>jung-graph-impl</artifactId>
-            <version>2.0</version>
+            <version>${net.sf.jung.version}</version>
         </dependency>
 
 
@@ -243,13 +236,6 @@
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${org.slf4j.version}</version>
             <scope>runtime</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>compile</scope>
         </dependency>
 
         <dependency>
@@ -309,7 +295,9 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
-        <org.slf4j.version>1.6.0</org.slf4j.version>
+        <org.slf4j.version>1.6.1</org.slf4j.version>
+        <com.technofovea.hl2parse.version>1.2.2-SNAPSHOT</com.technofovea.hl2parse.version>
+        <net.sf.jung.version>2.0</net.sf.jung.version>
     </properties>
 </project>
 

@@ -7,6 +7,7 @@ import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.Game;
 import com.technofovea.packbsp.devkits.GameConfException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.event.TreeModelEvent;
@@ -22,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GameTreeModel implements TreeModel {
 
-    static class KitRoot extends ArrayList<Devkit> {
+    protected static class KitRoot extends ArrayList<Devkit> {
 
         @Override
         public String toString() {
@@ -72,9 +73,9 @@ public class GameTreeModel implements TreeModel {
                 return root;
             } else if (parent instanceof Devkit) {
                 final Devkit kit = (Devkit) parent;
-                List<String> keys =kit.getGameKeys();
+                Collection<?> keys =kit.getGameKeys();
                 List<Game> ret = new ArrayList<Game>();
-                for(String k:keys){
+                for(Object k:keys){
                     ret.add(kit.getGame(k));
                 }
                 return ret;

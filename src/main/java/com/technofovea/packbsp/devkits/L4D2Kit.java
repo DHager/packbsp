@@ -89,7 +89,12 @@ public class L4D2Kit implements Devkit {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Game getGame(String gameKey) throws GameConfException {
+    public Game getGame(Object gameKey) throws GameConfException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
+
+    public String getGameName(Object gameKey) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+    
 }

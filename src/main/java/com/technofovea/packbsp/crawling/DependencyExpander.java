@@ -39,6 +39,7 @@ import com.technofovea.packbsp.crawling.nodes.SoundscapeNode;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -74,7 +75,7 @@ public class DependencyExpander extends DepthTraverser {
     }
     private static final Logger logger = LoggerFactory.getLogger(DependencyExpander.class);
     AssetLocator locator;
-    VmtHandler materialHandler;
+    VmtHandler materialHandler = new VmtHandler(Collections.EMPTY_SET); //TODO load/inject materials
     ModelHandler modelHandler = new ModelHandler();
     PhyHandler phyHandler = new PhyHandler();
     ParticleHandler particleHandler = new ParticleHandler();
@@ -85,12 +86,7 @@ public class DependencyExpander extends DepthTraverser {
     public DependencyExpander(DependencyGraph graph, Node start, AssetLocator locator) throws PackbspException {
         super(graph, start);
         this.locator = locator;
-        try {
-            materialHandler = new VmtHandler();
-        } catch (JAXBException ex) {
-            PackbspException ex2 = new PackbspException("Unable to load default XML config for recognizing material properties", ex);
-            throw ex2;
-        }
+        
 
 
     }
