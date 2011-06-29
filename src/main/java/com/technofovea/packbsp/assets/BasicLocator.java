@@ -26,7 +26,6 @@ import com.technofovea.hllib.methods.ManagedLibrary;
 import com.technofovea.packbsp.assets.AssetSource.Type;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -41,9 +40,9 @@ import org.slf4j.LoggerFactory;
  * 
  * @author Darien Hager
  */
-public class AssetLocatorImpl implements AssetLocator {
+public class BasicLocator implements AssetLocator {
 
-    private static final Logger logger = LoggerFactory.getLogger(AssetLocatorImpl.class);
+    private static final Logger logger = LoggerFactory.getLogger(BasicLocator.class);
     static final String VPK_EXTENSION = ".vpk";
     static final String GCF_EXTENSION = ".gcf";
     static final String NCF_EXTENSION = ".ncf";
@@ -57,7 +56,6 @@ public class AssetLocatorImpl implements AssetLocator {
     int mainAppId;
     List<Integer> dependencyIds = new ArrayList<Integer>();
     // Someday allow this value to be swapped-out to enable batch work. For now, leave it fixed.
-    MapAssetSource mapSource = null;
     List<AssetSearchLocation> searchPaths;
     Map<AssetSearchLocation, AssetSource> packages = new HashMap<AssetSearchLocation, AssetSource>();
 
@@ -71,7 +69,7 @@ public class AssetLocatorImpl implements AssetLocator {
      * @param bspFile The map being used as another source of assets
      * @throws PackbspException If a problem occurred accessing files or interpreting data.
      */
-    public AssetLocatorImpl(GameInfoReader gameInfoData, File steamapps, ClientRegistry reg, ManagedLibrary lib, File bspFile) throws PackbspException {
+    public BasicLocator(GameInfoReader gameInfoData, File steamapps, ClientRegistry reg, ManagedLibrary lib) throws PackbspException {
 
         this.operatingSystems = new HashSet<String>();
         this.operatingSystems.add("windows");     //TODO for mac-compatibility have a way of detecting the OS
@@ -80,12 +78,6 @@ public class AssetLocatorImpl implements AssetLocator {
         this.steamApps = steamapps;
         this.lib = lib;
         this.cdr = reg.getContentDescriptionRecord();
-
-        try {
-            mapSource = new MapAssetSource(lib, bspFile);
-        } catch (ArchiveIOException ex) {
-            throw new PackbspException("Unable to open source BSP", ex);
-        }
 
         // Determine appid, and any orange-box AdditionalContentId items
         mainAppId = gameInfoData.getSteamAppId();
@@ -137,21 +129,9 @@ public class AssetLocatorImpl implements AssetLocator {
 
     }
 
-    /**
-     * Retrieves a list of search locations being used.
-     * @return A list
-     */
-    public List<AssetSearchLocation> getSearchPaths() {
-        return new ArrayList<AssetSearchLocation>(searchPaths);
-    }
 
     public List<AssetHit> locate(String path) {
         List<AssetHit> hits = new ArrayList<AssetHit>();
-
-        if(mapSource.hasAsset(path)){
-            hits.add(new AssetHit(mapSource, path));
-        }
-
         for (AssetSearchLocation asl : searchPaths) {
             AssetSource src = packages.get(asl);
             boolean found = src.hasAsset(path);

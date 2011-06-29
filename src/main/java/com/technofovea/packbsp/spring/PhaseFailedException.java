@@ -39,10 +39,7 @@ public class PhaseFailedException extends Exception implements IntlException{
         }else{
             ex = new PhaseFailedException(defaultMessage);
         }
-        if(arguments == null){
-            arguments = new Object[0];
-        }
-        ex.intlMessage = new DefaultMessageSourceResolvable(new String[]{code}, arguments);
+        IntlExceptionUtil.combine(ex, code, arguments);
         return ex;
     }
 
@@ -50,15 +47,9 @@ public class PhaseFailedException extends Exception implements IntlException{
     public MessageSourceResolvable getIntlMessage() {
         return intlMessage;
     }
-    
-    
-    
-   
-    
-    
-    
 
-    
-    
+    public void setIntlMessage(MessageSourceResolvable intlMessage) {
+        this.intlMessage = intlMessage;
+    }
     
 }

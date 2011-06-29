@@ -16,7 +16,6 @@ import com.technofovea.packbsp.WindowsRegistryChecker;
 import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.Game;
 import com.technofovea.packbsp.devkits.GameConfException;
-import com.technofovea.packbsp.devkits.L4D2Kit;
 import com.technofovea.packbsp.devkits.SourceSDK;
 import com.technofovea.packbsp.devkits.SourceSDK.Engines;
 import java.io.File;
@@ -26,10 +25,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import org.antlr.runtime.ANTLRFileStream;
 import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
@@ -55,6 +52,8 @@ public class SteamPhaseFactory implements InitializingBean {
         public String getCurrentUser();
 
         public Map<Devkit, List<Game>> getGames();
+
+        public boolean containsGame(Game chosenGame);
     }
 
     protected static class SteamPhaseImpl implements SteamPhase {
@@ -70,8 +69,8 @@ public class SteamPhaseFactory implements InitializingBean {
             this.currentUser = currentUser;
             // Make deeply immutable copy
             HashMap<Devkit, List<Game>> tempMap = new HashMap<Devkit, List<Game>>();
-            for(Devkit k : games.keySet()){
-                tempMap.put(k,Collections.unmodifiableList(tempMap.get(k)));
+            for (Devkit k : games.keySet()) {
+                tempMap.put(k, Collections.unmodifiableList(games.get(k)));
             }
             this.games = Collections.unmodifiableMap(tempMap);
         }
@@ -90,6 +89,15 @@ public class SteamPhaseFactory implements InitializingBean {
 
         public Map<Devkit, List<Game>> getGames() {
             return games;
+        }
+
+        public boolean containsGame(Game chosenGame) {
+            for (Devkit k : games.keySet()) {
+                if (games.get(k).contains(chosenGame)) {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     private static final Logger logger = LoggerFactory.getLogger(SteamPhaseFactory.class);
@@ -147,21 +155,18 @@ public class SteamPhaseFactory implements InitializingBean {
             throw PhaseFailedException.create("Missing registry blob", "error.input.no_clientregistry_blob", STEAM_BLOB_NAME);
         }
 
-        logger.info(
-                "Creating temporary copy of registry blob to avoid read/write conflicts.");
+        logger.debug("Copying clientregistry from {}", regFile);
         final File regCopy;
-
-
-
         try {
             regCopy = createTempCopy(regFile);
+            logger.debug("Created temporary clientregistry copy at {}", regCopy);
+
         }
         catch (IOException ex) {
             throw PhaseFailedException.create("Couldn't copy client registry blob", ex, "error.cant_copy_blob");
         }
 
-        logger.info(
-                "Attempting to parse client registry blob at: {}", regCopy);
+        logger.debug("Attempting to parse client registry blob", regCopy);
         final ClientRegistry reg;
 
 
@@ -184,6 +189,7 @@ public class SteamPhaseFactory implements InitializingBean {
         final File steamAppData = new File(steamDir, "config/SteamAppData.vdf");
         final String currentUser;
         try {
+            logger.debug("Reading username from {}", steamAppData);
             CharStream ais = new ANTLRFileStream(steamAppData.getAbsolutePath());
             ValveTokenLexer lexer = new ValveTokenLexer(ais);
             SloppyParser parser = new SloppyParser(new CommonTokenStream(lexer));
@@ -193,7 +199,7 @@ public class SteamPhaseFactory implements InitializingBean {
             if ("".equals(currentUser)) {
                 throw PhaseFailedException.create("Could not read username from: " + steamAppData.getAbsolutePath(), "error.steam_not_running", steamAppData.getAbsolutePath());
             }
-            logger.info("Username detected as: {}", currentUser);
+            logger.debug("Username detected as: {}", currentUser);
         }
         catch (IOException ex) {
             throw PhaseFailedException.create("Could not read username from: " + steamAppData.getAbsolutePath(), ex, "error.steam_not_running", steamAppData.getAbsolutePath());
@@ -217,7 +223,9 @@ public class SteamPhaseFactory implements InitializingBean {
 
         String guess = null;
         try {
-            guess = wrc.getKey(STEAM_REGISTRY_PATH);
+            final String key = STEAM_REGISTRY_PATH;
+            logger.debug("Trying to load steam dir from registry at {}", key);
+            guess = wrc.getKey(key);
         }
         catch (IOException ex) {
             logger.error("Had an exception querying registry for Steam folder: {}", ex);
@@ -256,15 +264,18 @@ public class SteamPhaseFactory implements InitializingBean {
         /**
          * Instantiate Left 4 Dead 2 kit
          */
+        /*
         try {
-            kits.add(L4D2Kit.createKit(steamDir));
+        kits.add(L4D2Kit.createKit(steamDir));
         }
         catch (GameConfException ex) {
-            logger.warn("Error instantiating Devkit", ex);
-            if (gameErrorListener != null) {
-                gameErrorListener.devkitInitError(this, ex);
-            }
+        logger.warn("Error instantiating Devkit", ex);
+        if (gameErrorListener != null) {
+        gameErrorListener.devkitInitError(this, ex);
         }
+        }
+         * 
+         */
         return kits;
     }
 
@@ -294,10 +305,13 @@ public class SteamPhaseFactory implements InitializingBean {
             throw PhaseFailedException.create("Invalid Steam directory", "error.input.invalid_steam_dir", steamDir);
         }
 
-
+        logger.info("Opening clientregistry from Steam dir {}", steamDir);
         final ClientRegistry reg = parseRegistry(steamDir);
+        logger.info("Attempting to detect current user");
         final String currentUser = detectCurrentUser(steamDir);
+        logger.info("Loading Devkits");
         final List<Devkit> kits = loadKits(reg, currentUser);
+        logger.info("Loading Games from devkits");
         final Map<Devkit, List<Game>> gameTree = loadGames(kits);
 
 

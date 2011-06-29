@@ -22,8 +22,10 @@
     </appender>
 
   <logger name="com.technofovea.hllib">
-    <!-- Print only messages of level warn or above in the package com.foo -->
     <level value="debug"/>
+  </logger>
+  <logger name="org.springframework">
+    <level value="info"/>
   </logger>
 
     <root>

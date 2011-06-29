@@ -11,6 +11,7 @@ import org.springframework.context.MessageSourceResolvable;
  */
 public interface IntlException {
 
-    MessageSourceResolvable getIntlMessage();
+    public void setIntlMessage(MessageSourceResolvable msg);
+    public MessageSourceResolvable getIntlMessage();
     
 }

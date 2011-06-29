@@ -4,14 +4,14 @@
 package com.technofovea.packbsp.devkits;
 
 import com.technofovea.packbsp.spring.IntlException;
+import com.technofovea.packbsp.spring.IntlExceptionUtil;
 import org.springframework.context.MessageSourceResolvable;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 
 /**
  *
  * @author Darien Hager
  */
-public class GameConfException extends Exception implements IntlException{
+public class GameConfException extends Exception implements IntlException {
 
     MessageSourceResolvable intlMessage;
 
@@ -27,38 +27,29 @@ public class GameConfException extends Exception implements IntlException{
         super(message);
     }
 
-    
-    
-    public static GameConfException create(String defaultMessage, String code, Object... arguments){
+    public static GameConfException create(String defaultMessage, String code, Object... arguments) {
         return create(defaultMessage, null, code, arguments);
     }
-    public static GameConfException create(String defaultMessage, Throwable cause, String code, Object... arguments){
-        
+
+    public static GameConfException create(String defaultMessage, Throwable cause, String code, Object... arguments) {
+
         GameConfException ex;
-        if(cause != null){
-            ex= new GameConfException(defaultMessage,cause);
-        }else{
+        if (cause != null) {
+            ex = new GameConfException(defaultMessage, cause);
+        } else {
             ex = new GameConfException(defaultMessage);
         }
-        if(arguments == null){
-            arguments = new Object[0];
-        }
-        ex.intlMessage = new DefaultMessageSourceResolvable(new String[]{code}, arguments);
+        IntlExceptionUtil.combine(ex, code, arguments);
         return ex;
     }
 
     public MessageSourceResolvable getIntlMessage() {
         return intlMessage;
     }
-    
-    
-    
-   
-    
-    
-    
 
+    public void setIntlMessage(MessageSourceResolvable intlMessage) {
+        this.intlMessage = intlMessage;
+    }
     
-    
-    
+            
 }

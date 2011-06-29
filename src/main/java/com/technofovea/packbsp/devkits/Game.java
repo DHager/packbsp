@@ -9,12 +9,6 @@ import java.util.List;
  */
 public interface Game {
 
-    /**
-     * Returns a friendly name of this development kit for the user.
-     * @return A friendly name, such as "Half Life 2".
-     */
-    @Override
-    public String toString();
 
     /**
      * Retrieve the Devkit this Game is able to be managed through.
@@ -28,6 +22,13 @@ public interface Game {
      * @return A string ID
      */
     public String getId();
+    
+    /**
+     * Returns the name of the game. In the case of GameConfig.txt vs GameInfo.txt,
+     * the latter is returned.
+     * @return 
+     */
+    public String getName();
 
     public File getVmfDir();
 
@@ -36,6 +37,8 @@ public interface Game {
     public File getGameDir();
 
     public List<File> getFgdFiles();
+
+    //TODO appid
     
     //TODO search paths
 }

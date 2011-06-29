@@ -13,10 +13,8 @@
 /*
  * 
  */
-package com.technofovea.packbsp.crawling;
+package com.technofovea.packbsp.assets;
 
-import com.technofovea.packbsp.assets.AssetHit;
-import com.technofovea.packbsp.assets.AssetLocator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,12 +23,12 @@ import java.util.Map;
  *
  * @author Darien Hager
  */
-public class CachingLocatorWrap implements AssetLocator {
+public class CachingLocator implements AssetLocator {
 
     AssetLocator delegate;
     Map<String, List<AssetHit>> cache = new HashMap<String, List<AssetHit>>();
 
-    public CachingLocatorWrap(AssetLocator delegate) {
+    public CachingLocator(AssetLocator delegate) {
         this.delegate = delegate;
     }
 

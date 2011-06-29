@@ -27,13 +27,15 @@ import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import com.technofovea.hllib.HlLib;
 import com.technofovea.hllib.methods.ManagedLibrary;
+import com.technofovea.packbsp.assets.ArchiveIOException;
 import com.technofovea.packbsp.assets.AssetHit;
 import com.technofovea.packbsp.assets.AssetLocator;
-import com.technofovea.packbsp.assets.AssetLocatorImpl;
+import com.technofovea.packbsp.assets.BasicLocator;
 import com.technofovea.packbsp.assets.AssetSource.Type;
 import com.technofovea.packbsp.conf.IncludeItem;
 import com.technofovea.packbsp.conf.MapIncludes;
-import com.technofovea.packbsp.crawling.CachingLocatorWrap;
+import com.technofovea.packbsp.assets.CachingLocator;
+import com.technofovea.packbsp.assets.MapFirstLocator;
 import com.technofovea.packbsp.crawling.CrawlListener;
 import com.technofovea.packbsp.crawling.DependencyExpander;
 import com.technofovea.packbsp.crawling.DependencyGraph;
@@ -380,8 +382,15 @@ public class AppModel {
         }
 
         // Make locator
-        AssetLocator realLocator = new AssetLocatorImpl(_gameInfoData, new File(_steamDirectory, "steamapps"), _reg, hllib, _sourceCopy);
-        locator = new CachingLocatorWrap(realLocator);
+        
+        BasicLocator baseLocator = new BasicLocator(_gameInfoData, new File(_steamDirectory, "steamapps"), _reg, hllib);
+        MapFirstLocator realLocator;
+        try {
+            realLocator = new MapFirstLocator(baseLocator, hllib, _sourceCopy);
+        }catch (ArchiveIOException ex) {
+            throw new PackbspException("Could not open source map file to see packed contentts",ex);
+        }
+        locator = new CachingLocator(realLocator);
 
         // Make FGD spec
         //TODO determine if gamedata0 overrides gamedata1 or vice-versa in gameconfig. Assuming later entries override former

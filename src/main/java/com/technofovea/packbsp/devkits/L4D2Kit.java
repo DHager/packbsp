@@ -45,7 +45,7 @@ public class L4D2Kit implements Devkit {
     private L4D2Kit(File deadDir) throws GameConfException {
         baseDir = deadDir;
         binDir = new File(deadDir, BIN_DIR);
-        gameConfig = new File(baseDir, GAMECONFIG_NAME);
+        gameConfig = new File(binDir, GAMECONFIG_NAME);
         
         if (!binDir.isDirectory()) {
             throw GameConfException.create("Bin dir missing", "error.l4d2sdk.bad_bin_dir", binDir);

@@ -15,9 +15,11 @@
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!--
         <property name="properties">
             <value>placeholder=placeholder</value>
         </property>
+        -->
         <property name="locations">
             <value>file:conf/beans.properties</value>
         </property>
@@ -56,6 +58,7 @@
         </property>
     </bean>
     
+    <!-- Phase factories -->
     <bean id="factory.steam" class="com.technofovea.packbsp.spring.SteamPhaseFactory">
         <property name="scope" ref="scope.steam"/>
     </bean>
@@ -65,13 +68,13 @@
         <property name="steamPhase" ref="phase.steam"/>
     </bean>
     
+    <!-- Phase outputs -->
     <bean id="phase.steam" scope="steam" factory-bean="factory.steam" factory-method="proceed">
         <aop:scoped-proxy proxy-target-class="false"/>
     </bean>
     
+    <bean id="phase.game" scope="game" factory-bean="factory.game" factory-method="proceed">
+        <aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
     
-    
-    
-    
-        
 </beans>

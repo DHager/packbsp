@@ -103,9 +103,10 @@ public class SourceSDK implements Devkit {
         } else if (!gameDataPath.isFile()) {
             throw GameConfException.create("Gameconfig file missing", "error.sourcesdk.bad_gameconfig", e.displayName, binDir);
         }
-        logger.debug("Checking for games defined in in {}", gameDataPath);
         try {
+
             // Parse each gameconfig.txt file
+            logger.debug("Checking for games defined in in {}", gameDataPath);
             ANTLRFileStream afs = new ANTLRFileStream(gameDataPath.getAbsolutePath());
             ValveTokenLexer lexer = new ValveTokenLexer(afs);
             SloppyParser parser = new SloppyParser(new CommonTokenStream(lexer));
@@ -147,8 +148,6 @@ public class SourceSDK implements Devkit {
         }
         return gameKey.getName();
     }
-    
-    
 
     public Game getGame(Object key) throws GameConfException {
         if (!( key instanceof GameConfigReader.Game )) {
