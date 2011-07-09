@@ -3,8 +3,6 @@
  */
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.MapDepGraph;
-import com.technofovea.packbsp.crawling2.Node;
 import java.util.WeakHashMap;
 
 /**

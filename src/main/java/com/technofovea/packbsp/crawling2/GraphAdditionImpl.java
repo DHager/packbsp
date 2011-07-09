@@ -3,10 +3,6 @@
  */
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.Edge;
-import com.technofovea.packbsp.crawling2.GraphAddition;
-import com.technofovea.packbsp.crawling2.Node;
-
 /**
  *
  * @author Darien Hager

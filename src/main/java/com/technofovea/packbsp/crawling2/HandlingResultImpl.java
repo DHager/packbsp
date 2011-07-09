@@ -3,8 +3,6 @@
  */
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.GraphAddition;
-import com.technofovea.packbsp.crawling2.HandlingResult;
 import java.util.Collections;
 import java.util.Set;
 

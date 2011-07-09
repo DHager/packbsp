@@ -1,9 +1,5 @@
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.Edge;
-import com.technofovea.packbsp.crawling2.Layer;
-import com.technofovea.packbsp.crawling2.MapDepGraph;
-import com.technofovea.packbsp.crawling2.Node;
 import edu.uci.ics.jung.graph.DirectedSparseMultigraph;
 import edu.uci.ics.jung.graph.util.EdgeType;
 import edu.uci.ics.jung.graph.util.Pair;

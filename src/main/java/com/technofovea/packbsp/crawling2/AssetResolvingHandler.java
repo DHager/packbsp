@@ -5,15 +5,6 @@ package com.technofovea.packbsp.crawling2;
 
 import com.technofovea.packbsp.assets.AssetHit;
 import com.technofovea.packbsp.assets.AssetLocator;
-import com.technofovea.packbsp.crawling2.Edge;
-import com.technofovea.packbsp.crawling2.GraphAddition;
-import com.technofovea.packbsp.crawling2.HandlingResult;
-import com.technofovea.packbsp.crawling2.Layer;
-import com.technofovea.packbsp.crawling2.LocatedAssetNode;
-import com.technofovea.packbsp.crawling2.MapDepGraph;
-import com.technofovea.packbsp.crawling2.Node;
-import com.technofovea.packbsp.crawling2.NodeHandler;
-import com.technofovea.packbsp.crawling2.RelativeAssetNode;
 import edu.uci.ics.jung.graph.util.Pair;
 import java.util.Collection;
 import java.util.HashMap;

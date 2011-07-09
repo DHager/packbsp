@@ -3,13 +3,6 @@
  */
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.Edge;
-import com.technofovea.packbsp.crawling2.GraphAddition;
-import com.technofovea.packbsp.crawling2.HandlerException;
-import com.technofovea.packbsp.crawling2.HandlingResult;
-import com.technofovea.packbsp.crawling2.MapDepGraph;
-import com.technofovea.packbsp.crawling2.Node;
-import com.technofovea.packbsp.crawling2.NodeHandler;
 import edu.uci.ics.jung.graph.util.Pair;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -20,13 +13,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * An expander is responsible for mediating interaction between a {@link MapDepGraph}
+ * Responsible for managing incremental interaction between a {@link MapDepGraph}
  * and a series of {@link NodeHandler} instances. 
  * @author Darien Hager
  */
-public class Expander {
+public class GraphExplorer {
 
-    private static final Logger logger = LoggerFactory.getLogger(Expander.class);
+    private static final Logger logger = LoggerFactory.getLogger(GraphExplorer.class);
     protected List<NodeHandler> handlers = new ArrayList<NodeHandler>();
     protected MapDepGraph graph;
 

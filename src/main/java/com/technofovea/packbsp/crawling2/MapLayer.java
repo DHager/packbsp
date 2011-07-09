@@ -3,9 +3,6 @@
  */
 package com.technofovea.packbsp.crawling2;
 
-import com.technofovea.packbsp.crawling2.Layer;
-import com.technofovea.packbsp.crawling2.Node;
-
 /**
  *
  * @author Darien Hager
