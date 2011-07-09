@@ -1,4 +1,4 @@
-package com.technofovea.packbsp.crawling2.impl;
+package com.technofovea.packbsp.crawling2;
 
 import com.technofovea.packbsp.crawling2.Edge;
 import com.technofovea.packbsp.crawling2.Layer;

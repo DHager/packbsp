@@ -1,7 +1,7 @@
 /*
  * 
  */
-package com.technofovea.packbsp.crawling2.impl;
+package com.technofovea.packbsp.crawling2;
 
 import com.technofovea.packbsp.assets.AssetHit;
 import com.technofovea.packbsp.assets.AssetLocator;
