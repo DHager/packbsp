@@ -13,9 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.Map;
-import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,19 +33,20 @@ public class MapDepGraphImpl extends DirectedSparseMultigraph<Node, Edge> implem
     public MapDepGraphImpl(Collection<Node> maps) {
         this.addVertex(this.root);
         for (Node map : maps) {
-
-            MapLayer layer = new MapLayer(map);
-            mapLayers.add(layer);
-
-
-
-            boolean added = false;
-
-            added = this.addVertex(map);
-            assert ( added );
-            added = this.addEdge(new BasicEdge(layer, "Rooted Map"), this.root, map);
-            assert ( added );
+            addMap(map);
         }
+    }
+
+    private void addMap(Node map) {
+        MapLayer layer = new MapLayer(map);
+        mapLayers.add(layer);
+
+        boolean added = false;
+
+        added = this.addVertex(map);
+        assert ( added );
+        added = this.addEdge(new BasicEdge(layer, "Rooted Map"), this.root, map);
+        assert ( added );
     }
 
     protected Map<Layer, Collection<Edge>> groupEdges(Collection<Edge> outs) {

@@ -23,7 +23,7 @@ public interface NodeHandler {
      * @param incomign The edge being checked.
      * @return True if other handlers should be offered the opportunity to process this node.
      */
-    public HandlingResult handle(MapDepGraph graph, Edge incoming);
+    public HandlingResult handle(MapDepGraph graph, Edge incoming) throws HandlerException;
 
     /**
      * Potentially called after {@link #handle(com.technofovea.packbsp.crawling2.MapDepGraph, com.technofovea.packbsp.crawling2.Edge)},
