@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -73,7 +74,7 @@ public class AssetAlternative {
      * @return
      */
     public static List<AssetAlternative> screenTypes(List<AssetHit> hits) {
-        Set<Type> seen = new HashSet<Type>();
+        Set<Type> seen = EnumSet.of(Type.ARCHIVE);
         List<AssetAlternative> ret = new ArrayList<AssetAlternative>();
 
         for (AssetHit h : hits) {

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<profiles>
+    <profile name="a">
+        <description>atest</description>
+    </profile>
+    <profile name="b">
+        <description>btest</description>
+    </profile>
+</profiles>

@@ -16,8 +16,7 @@ import com.technofovea.packbsp.gui2.logging.LoggingTable;
 import com.technofovea.packbsp.gui2.logging.LogFrame;
 import com.technofovea.packbsp.AppModel;
 import com.technofovea.packbsp.PackbspException;
-import com.technofovea.packbsp.PackbspUtil;
-import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import java.awt.CardLayout;
 import java.awt.event.ItemEvent;
 import java.awt.event.WindowEvent;
@@ -211,7 +210,7 @@ public class PackbspView extends FrameView {
         steamDirPicker.setDialogType(FilePicker.OPEN_DIALOG);
         steamDirPicker.setFileSelectionMode(FilePicker.DIRECTORIES_ONLY);
         steamDirPicker.setName("steamDirPicker"); // NOI18N
-        steamDirPicker.setSelectedFile(PackbspUtil.guessSteamDir());
+        steamDirPicker.setSelectedFile(new File("c:/program files/valve/steam/"));
 
         org.jdesktop.layout.GroupLayout step1panelLayout = new org.jdesktop.layout.GroupLayout(step1panel);
         step1panel.setLayout(step1panelLayout);
@@ -1014,10 +1013,10 @@ public class PackbspView extends FrameView {
 
     @Action(block = Task.BlockingScope.WINDOW)
     public Task advanceStep2() throws PackbspException {
-        return new AbstractTask<Game, Void>(app, this) {
+        return new AbstractTask<DetectedGame, Void>(app, this) {
 
             @Override
-            protected Game doInBackground() throws PackbspException {
+            protected DetectedGame doInBackground() throws PackbspException {
                 setTitle("Picking target game");
                 
                 TreePath path = gameTree.getSelectionPath();
@@ -1025,9 +1024,9 @@ public class PackbspView extends FrameView {
                 if(path != null){
                     target = path.getLastPathComponent();
                 }
-                Game g = null;
-                if(target instanceof Game){
-                    g = ((Game)target);
+                DetectedGame g = null;
+                if(target instanceof DetectedGame){
+                    g = ((DetectedGame)target);
                 }
 
                 model.acceptGame(g);
@@ -1035,7 +1034,7 @@ public class PackbspView extends FrameView {
             }
 
             @Override
-            protected void succeeded(Game chosen) {
+            protected void succeeded(DetectedGame chosen) {
                 newPackDialog.setDefaultDir(model.getGameDir());
                 sourceFilePicker.setSelectedFile(model.getBspDir());
                 destFilePicker.setSelectedFile(model.getBspDir());

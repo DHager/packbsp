@@ -18,7 +18,7 @@ package com.technofovea.packbsp.assets;
  * 
  * @author Darien Hager
  */
-class ArchiveIOException extends Exception {
+public class ArchiveIOException extends Exception {
 
     public ArchiveIOException(Throwable cause) {
         super(cause);

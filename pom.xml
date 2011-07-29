@@ -47,9 +47,67 @@
             <url>file://${basedir}/../mvn-repo/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-repository.dev.java.net</id>
+            <name>Java.net Maven 2 Repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
+            <!--
+            <plugin>
+                <groupId>com.sun.tools.jxc.maven2</groupId>
+                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    
+                    <project>${project}</project>
+                    <destdir>${project.build.directory}/conf</destdir>
+                    <srcdir>${project.build.sourceDirectory}</srcdir>
+                    <includes>
+                        <include>com/technofovea/packbsp/conf/*</include>
+                    </includes>   
+                    
+                    <verbose>false</verbose>
+                    
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            -->
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -143,6 +201,23 @@
     </build>
 
     <dependencies>
+        
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-core</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-aop</artifactId>
+            <version>${org.springframework.version}</version>
+        </dependency>
+        
 
         <dependency>
             <groupId>org.jdesktop</groupId>
@@ -178,55 +253,47 @@
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-common</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-parsers</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>com.technofovea</groupId>
             <artifactId>hl2parse-binary</artifactId>
-            <version>1.2.1</version>
+            <version>${com.technofovea.hl2parse.version}</version>
             <scope>compile</scope>
         </dependency>
 
         <dependency>
             <groupId>net.sf.jung</groupId>
             <artifactId>jung-api</artifactId>
-            <version>2.0</version>
-        </dependency>
-
-
-        <dependency>
-            <groupId>net.sf.jung</groupId>
-            <artifactId>jung-visualization</artifactId>
-            <version>2.0</version>
+            <version>${net.sf.jung.version}</version>
         </dependency>
 
         <dependency>
             <groupId>net.sf.jung</groupId>
             <artifactId>jung-graph-impl</artifactId>
-            <version>2.0</version>
+            <version>${net.sf.jung.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.0</version>
+            <version>${org.slf4j.version}</version>
         </dependency>
-
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.14</version>
-            <scope>compile</scope>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${org.slf4j.version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <dependency>
@@ -251,19 +318,18 @@
         </dependency>
 
 
-       <!--
+       
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.1</version>
+            <version>${javax.xml.bind.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.1.12</version>
+            <version>${javax.xml.bind.version}</version>
         </dependency>
-       -->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -272,8 +338,25 @@
         </dependency>
 
     </dependencies>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <configuration>
+                    <configLocation>config/sun_checks.xml</configLocation>
+                </configuration>
+            </plugin>
+        </plugins>
+    </reporting>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <org.springframework.version>3.0.5.RELEASE</org.springframework.version>
+        <org.slf4j.version>1.6.1</org.slf4j.version>
+        <com.technofovea.hl2parse.version>1.2.2-SNAPSHOT</com.technofovea.hl2parse.version>
+        <net.sf.jung.version>2.0</net.sf.jung.version>
+        <javax.xml.bind.version>2.2.4</javax.xml.bind.version>
+
     </properties>
 </project>
 

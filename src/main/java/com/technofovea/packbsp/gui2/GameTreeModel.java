@@ -4,10 +4,10 @@
 package com.technofovea.packbsp.gui2;
 
 import com.technofovea.packbsp.devkits.Devkit;
-import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.GameConfigurationException;
-import com.technofovea.packbsp.devkits.GameEngine;
+import com.technofovea.packbsp.devkits.DetectedGame;
+import com.technofovea.packbsp.devkits.GameConfException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import javax.swing.event.TreeModelEvent;
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GameTreeModel implements TreeModel {
 
-    static class KitRoot extends ArrayList<Devkit> {
+    protected static class KitRoot extends ArrayList<Devkit> {
 
         @Override
         public String toString() {
@@ -47,7 +47,7 @@ public class GameTreeModel implements TreeModel {
     }
 
     public boolean isLeaf(Object node) {
-        return (node instanceof Game);
+        return (node instanceof DetectedGame);
     }
 
     public Object getRoot() {
@@ -72,13 +72,17 @@ public class GameTreeModel implements TreeModel {
                 // Root itself is a list
                 return root;
             } else if (parent instanceof Devkit) {
-                return ((Devkit) parent).getGameEngines();
-            } else if (parent instanceof GameEngine) {
-                return ((GameEngine) parent).getGames();
+                final Devkit kit = (Devkit) parent;
+                Collection<?> keys =kit.getGameKeys();
+                List<DetectedGame> ret = new ArrayList<DetectedGame>();
+                for(Object k:keys){
+                    ret.add(kit.getGame(k));
+                }
+                return ret;
             } else {
                 return null;
             }
-        } catch (GameConfigurationException gex) {
+        } catch (GameConfException gex) {
             logger.warn("Problem expanding tree node "+parent.toString(),gex);
             return null;
         }

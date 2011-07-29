@@ -27,13 +27,15 @@ import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
 import com.technofovea.hllib.HlLib;
 import com.technofovea.hllib.methods.ManagedLibrary;
+import com.technofovea.packbsp.assets.ArchiveIOException;
 import com.technofovea.packbsp.assets.AssetHit;
 import com.technofovea.packbsp.assets.AssetLocator;
-import com.technofovea.packbsp.assets.AssetLocatorImpl;
+import com.technofovea.packbsp.assets.BasicLocator;
 import com.technofovea.packbsp.assets.AssetSource.Type;
 import com.technofovea.packbsp.conf.IncludeItem;
 import com.technofovea.packbsp.conf.MapIncludes;
-import com.technofovea.packbsp.crawling.CachingLocatorWrap;
+import com.technofovea.packbsp.assets.CachingLocator;
+import com.technofovea.packbsp.assets.MapFirstLocator;
 import com.technofovea.packbsp.crawling.CrawlListener;
 import com.technofovea.packbsp.crawling.DependencyExpander;
 import com.technofovea.packbsp.crawling.DependencyGraph;
@@ -43,13 +45,13 @@ import com.technofovea.packbsp.crawling.Node;
 import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
 import com.technofovea.packbsp.devkits.Devkit;
-import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.SourceSDK;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.packaging.BspZipController;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -66,6 +68,8 @@ import org.antlr.runtime.CharStream;
 import org.antlr.runtime.CommonTokenStream;
 import org.antlr.runtime.RecognitionException;
 import org.apache.commons.exec.ExecuteException;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +83,11 @@ import org.slf4j.LoggerFactory;
  */
 public class AppModel {
 
-    static final String BSLASH = "\\";
     final static String CR_BLOB = "clientregistry.blob";
     final static int SDK_APPID = 211;
     final static String STEAM_APPS_FOLDER = "steamapps";
     static final String ENGINE_BIN = "bin";
-    static final String GAMEDATA_PATH = "bin" + BSLASH + "gameconfig.txt";
+    static final String GAMEDATA_PATH = "bin/gameconfig.txt";
     static final String BSPZIP_FILENAME = "bspzip.exe";
     static final String STEAM_APP_DATA = "config/SteamAppData.vdf";
 
@@ -97,7 +100,7 @@ public class AppModel {
         STEAM,
         /**
          * Done: Parsed steam settings, found current user and SDK dir, parsed gameconfig
-         * Require: Engine and Game choice
+         * Require: Engine and DetectedGame choice
          */
         GAME,
         /**
@@ -136,7 +139,7 @@ public class AppModel {
     File _sourceBsp;
     File _sourceCopy;
     List<Devkit> _kits;
-    Game _chosenGame;
+    DetectedGame _chosenGame;
     GameInfoReader _gameInfoData;
     DependencyGraph _graph;
     Map<String, DependencyItem> _deps;
@@ -163,6 +166,18 @@ public class AppModel {
         }
     }
 
+    static File createTempCopy(File source) throws IOException {
+        String ext = FilenameUtils.getExtension(source.getName());
+        File dest = File.createTempFile("packbsp_temp_", "." + ext);
+        dest.deleteOnExit();
+        FileInputStream fis = new FileInputStream(source);
+        FileOutputStream fos = new FileOutputStream(dest);
+        IOUtils.copy(fis, fos);
+        fis.close();
+        fos.close();
+        return dest;
+    }
+    
     /**
      *
      * @param dir
@@ -183,7 +198,7 @@ public class AppModel {
         logger.info("Creating temporary copy of registry blob to avoid read/write conflicts.");
         final File blobfile;
         try {
-            blobfile = PackbspUtil.createTempCopy(originalBlob);
+            blobfile = createTempCopy(originalBlob);
         } catch (IOException ex) {
             throw new PackbspException("Could not create temporary copy of client registry blob. Pause any game-downloads or wait for Steam to finish updating and try again.", ex);
         }
@@ -225,12 +240,17 @@ public class AppModel {
          * Init supported development kits
          */
         List<Devkit> kits = new ArrayList<Devkit>();
-        try {
-            Devkit basic = SourceSDK.createKit(steamDir, cdr, currentUser);
-            kits.add(basic);
-        } catch (BlobParseFailure ex) {
-            logger.warn("A problem occurred checking for the Source SDK", ex);
+         /*
+        for (Engine e : SourceSDK.Engine.values()) {
+            try {
+                kits.add(SourceSDK.createKit(e, steamDir, reg, currentUser));
+            }
+            catch (GameConfException ex) {
+                logger.error("Problem instantiating SDK",ex);
+            }
         }
+          * 
+          */
 
 
         currentPhase = Phase.GAME;
@@ -247,13 +267,11 @@ public class AppModel {
         return copy;
     }
 
-    public void acceptGame(final Game chosen) throws PackbspException, IllegalArgumentException {
+    public void acceptGame(final DetectedGame chosen) throws PackbspException, IllegalArgumentException {
         assertPhaseSameOrAfter(Phase.GAME);
 
         if (chosen == null) {
             throw new IllegalArgumentException("No game was selected");
-        } else if (!chosen.isPresent()) {
-            throw new PackbspException("The chosen game doesn't appear to be present or has a configuration problem.");
         }
 
 
@@ -322,7 +340,7 @@ public class AppModel {
 
         File tempCopy;
         try {
-            tempCopy = PackbspUtil.createTempCopy(source);
+            tempCopy = createTempCopy(source);
         } catch (IOException ex) {
             throw new PackbspException("Unable to create a temporary copy of the source file for secure reading", ex);
         }
@@ -361,8 +379,15 @@ public class AppModel {
         }
 
         // Make locator
-        AssetLocator realLocator = new AssetLocatorImpl(_gameInfoData, new File(_steamDirectory, "steamapps"), _reg, hllib, _sourceCopy);
-        locator = new CachingLocatorWrap(realLocator);
+        
+        BasicLocator baseLocator = new BasicLocator(_gameInfoData, new File(_steamDirectory, "steamapps"), _reg, hllib);
+        MapFirstLocator realLocator;
+        try {
+            realLocator = new MapFirstLocator(baseLocator, hllib, _sourceCopy);
+        }catch (ArchiveIOException ex) {
+            throw new PackbspException("Could not open source map file to see packed contentts",ex);
+        }
+        locator = new CachingLocator(realLocator);
 
         // Make FGD spec
         //TODO determine if gamedata0 overrides gamedata1 or vice-versa in gameconfig. Assuming later entries override former
@@ -519,7 +544,7 @@ public class AppModel {
             }
         }
 
-        final File sdkToolsDir = _chosenGame.getParent().getBinDir();
+        final File sdkToolsDir = _chosenGame.getKitBinDir();
         final File bspzipExe = new File(sdkToolsDir, "bin/" + BSPZIP_FILENAME);
         final BspZipController bspzip = new BspZipController(bspzipExe);
         ByteArrayOutputStream resultStream = new ByteArrayOutputStream();

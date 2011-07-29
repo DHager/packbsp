@@ -2,3 +2,4 @@ packbsp_debug.log
 HLLib_32.dll
 HLLib_64.dll
 target/
+nbproject/

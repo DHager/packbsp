@@ -21,7 +21,7 @@ package com.technofovea.packbsp.crawling.handlers;
  * @author Darien Hager
  */
 public class HandlingException extends Exception {
-
+    
     public HandlingException(Throwable cause) {
         super(cause);
     }
@@ -36,5 +36,5 @@ public class HandlingException extends Exception {
 
     public HandlingException() {
     }
-
+    
 }

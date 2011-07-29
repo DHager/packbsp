@@ -1,35 +1,22 @@
 package com.technofovea.packbsp.devkits;
 
-import com.technofovea.packbsp.PackbspException;
-import java.util.List;
+import java.io.File;
+import java.util.Collection;
 
 /**
  * Represents a development kit. Examples include the Source SDK or the
- * Left 4 Dead Authoring Tools.
+ * Left 4 Dead Authoring Tools. Useful for grouping a series of {@link DetectedGame}
+ * items together.
  *
  * @author Darien Hager
  */
 public interface Devkit {
 
     /**
-     * Tests if the given devkit is present and supported on the system.
-     * @return True if present, false otherwise.
-     */
-    public boolean isPresent();
-
-    /**
-     * Returns a list of game engines this kit supports.
-     * @return A list of supported GameEngines.
-     * @throws GameConfigurationException if this Devkit is not present or if 
-     * there is not enough information to determine what its engines are.
-     */
-    public List<GameEngine> getGameEngines() throws GameConfigurationException;
-    /**
      * Returns a friendly name of this development kit for the user.
      * @return A friendly name, such as "Source Development Kit".
      */
-    @Override
-    public String toString();
+    public String getName();
 
     /**
      * Returns a string ID (possibly specific to PackBSP) designed to disambiguate

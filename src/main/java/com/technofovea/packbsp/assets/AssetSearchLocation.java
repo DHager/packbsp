@@ -23,7 +23,7 @@ import java.io.File;
  * 
  * @author Darien Hager
  */
-class AssetSearchLocation {
+public class AssetSearchLocation {
 
     protected Type type;
     // Directory, GCF, or exclude-manifest

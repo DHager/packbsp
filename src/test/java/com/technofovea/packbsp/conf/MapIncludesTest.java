@@ -12,8 +12,8 @@
  */
 package com.technofovea.packbsp.conf;
 
-import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.GameEngine;
+import com.technofovea.packbsp.devkits.Devkit;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -72,23 +72,23 @@ public class MapIncludesTest {
         File src = new File("conf/map_includes.xml");
         MapIncludes conf2 = MapIncludes.fromXml(src);
 
-        final GameEngine mockEngine = context.mock(GameEngine.class);
+        final Devkit mockKit = context.mock(Devkit.class);
         context.checking(new Expectations() {
 
             {
-                oneOf(mockEngine).getId();
-                will(returnValue("orangebox"));
+                oneOf(mockKit).getId();
+                will(returnValue("source_sdk_orangebox"));
             }
         });
 
-        final Game mockGame = context.mock(Game.class);
+        final DetectedGame mockGame = context.mock(DetectedGame.class);
         context.checking(new Expectations() {
 
             {
-                oneOf(mockGame).getId();
+                oneOf(mockGame).getName();
                 will(returnValue("Team Fortress 2"));
-                oneOf(mockGame).getParent();
-                will(returnValue(mockEngine));
+                oneOf(mockGame).getParentKit();
+                will(returnValue(mockKit));
             }
         });
 
