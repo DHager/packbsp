@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+           http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+           http://www.springframework.org/schema/context
+           http://www.springframework.org/schema/context/spring-context-2.5.xsd
+           http://www.springframework.org/schema/util 
+           http://www.springframework.org/schema/util/spring-util-2.5.xsd
+           http://www.springframework.org/schema/aop
+           http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+
+    <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!--
+        Note that if there are multiple PropertyPlaceholderConfigurer objects, the first property
+        seen "wins".
+        
+        <property name="properties">
+            <value>placeholder=placeholder</value>
+        </property>
+        -->
+        <property name="locations">
+            <value>core.properties</value>
+        </property>
+    </bean>
+    
+    <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+        <property name="basenames">
+            <list>
+                <!--
+                First load from the classpath (which generally contains non-locale defaults)
+                And then load from the filesystem. (This allows people to work on I18N without
+                requiring them to download the source and compile.)
+                -->
+                <value>classpath:errors</value>
+                <value>file:conf/errors</value>
+            </list>
+        </property>
+    </bean>
+    
+       
+
+    <!-- Scopes, abstract beans, internationalization -->
+    <bean id="steam-scope" class="com.technofovea.packbsp.spring.DefaultNestedScope"/>
+    <bean id="game-scope" class="com.technofovea.packbsp.spring.DefaultNestedScope">
+        <property name="parentScopes" ref="steam-scope"/>
+    </bean>
+
+    <bean class="org.springframework.beans.factory.config.CustomScopeConfigurer">
+        <property name="scopes">
+            <map>
+                <entry key="steam" value-ref="steam-scope"/>      
+                <entry key="game" value-ref="game-scope"/>
+            </map>
+        </property>
+    </bean>
+    
+    <bean id="exceptionLocalizer" class="com.technofovea.packbsp.spring.DefaultExceptionLocalizer" depends-on="messageSource"/>        
+
+    <bean id="abstract-component" abstract="true">
+        <property name="localizer" ref="exceptionLocalizer"/>
+    </bean>
+    
+    <!-- Basic environment components -->
+    
+    <bean id="profile-loader" class="com.technofovea.packbsp.spring.ProfileLoader" parent="abstract-component">
+        <property name="dataPath" value="${packbsp.profile_location}"/>
+    </bean>
+    
+    <bean id="steamdir-detector" class="com.technofovea.packbsp.spring.SteamDirectoryFinder" parent="abstract-component">
+        <property name="registryKey" value="${steam.registry_installation_key}"/>
+    </bean>
+    
+    <bean id="registry-factory" class="com.technofovea.packbsp.spring.RegistryFactory" parent="abstract-component">
+    </bean> 
+    
+    <bean id="user-detector" class="com.technofovea.packbsp.spring.SteamUserReader" parent="abstract-component">
+        <property name="appDataPath" value="${steam.app_data_vdf}"/>
+    </bean>
+
+ 
+    <!--
+    Business logic objects
+    -->
+    
+    <bean id="steam-phase-factory" class="com.technofovea.packbsp.spring.SteamPhaseFactory" parent="abstract-component">
+        <property name="scope" ref="steam-scope"/>
+    </bean>
+    
+    <bean id="steam-phase" factory-bean="steam-phase-factory" factory-method="createPhase" scope="steam">
+        <aop:scoped-proxy proxy-target-class="false"/>
+    </bean>
+    
+    <bean id="current-user" factory-bean="steam-phase" factory-method="getCurrentUser" scope="prototype"/>
+    <bean id="client-registry" factory-bean="steam-phase" factory-method="getRegistry" scope="prototype"/>
+    <bean id="steam-directory" factory-bean="steam-phase" factory-method="getSteamDir" scope="prototype"/>
+
+    
+        
+    <bean id="devkit-loader" class="com.technofovea.packbsp.spring.KitLoader" scope="steam" parent="abstract-component">
+        <property name="kitFactories">
+            <list>
+                <bean class="com.technofovea.packbsp.devkits.SourceSdkFactory">
+                    <property name="steamDir" ref="steam-directory"/>
+                    <property name="currentUser" ref="current-user"/>
+                    <property name="registry" ref="client-registry"/>
+                </bean>
+            </list>
+        </property>
+    </bean>
+    
+    
+    
+    
+    
+    
+</beans>

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<profiles>
+    <profile name="a" devkit="akit">
+        <description>atest</description>
+        <configs>
+            <file>a.xml</file>
+        </configs>
+        <properties>
+            <file>a.properties</file>
+        </properties>
+    </profile>
+    <profile name="b" devkit="bkit">
+        <description>btest</description>
+    </profile>
+</profiles>

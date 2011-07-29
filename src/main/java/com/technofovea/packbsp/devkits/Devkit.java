@@ -5,44 +5,18 @@ import java.util.Collection;
 
 /**
  * Represents a development kit. Examples include the Source SDK or the
- * Left 4 Dead Authoring Tools.
+ * Left 4 Dead Authoring Tools. Useful for grouping a series of {@link DetectedGame}
+ * items together.
  *
  * @author Darien Hager
  */
 public interface Devkit {
 
-
-    /**
-     * Returns a Game object for the given key, which may be either instantiated
-     * or re-used from a past invocation.
-     * 
-     * @return The Game associated with the key, or null if the key was invalid.
-     * @throws GameConfigurationException if there was a problem creating the Game object
-     */
-    public Game getGame(Object gameKey) throws GameConfException;
-    
-    /**
-     * Retrieve a user-displayable name for the given game. We cannot simply use
-     * the names as keys because it is possible for duplicates to exist.
-     * @param gameKey
-     * @return The name of the game.
-     */
-    public String getGameName(Object gameKey);
-    
-    /**
-     * Returns a unique list of keys which are used to refer to specific games this kit 
-     * provides access to. These keys are *not* intended to be used for long-term
-     * identification and may be inconsistent across program executions or platforms.
-     * 
-     * @return A unique list of keys to identify available games
-     */
-    public Collection<?> getGameKeys();
     /**
      * Returns a friendly name of this development kit for the user.
      * @return A friendly name, such as "Source Development Kit".
      */
-    @Override
-    public String toString();
+    public String getName();
 
     /**
      * Returns a string ID (possibly specific to PackBSP) designed to disambiguate
@@ -50,11 +24,5 @@ public interface Devkit {
      * @return A string ID
      */
     public String getId();
-    
-    /**
-     * Retrieve the location where the various executables for this kit are stored.
-     * @return 
-     */
-    public File getBinDir();
 
 }

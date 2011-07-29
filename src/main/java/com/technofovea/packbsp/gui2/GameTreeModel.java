@@ -4,7 +4,7 @@
 package com.technofovea.packbsp.gui2;
 
 import com.technofovea.packbsp.devkits.Devkit;
-import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.devkits.GameConfException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -47,7 +47,7 @@ public class GameTreeModel implements TreeModel {
     }
 
     public boolean isLeaf(Object node) {
-        return (node instanceof Game);
+        return (node instanceof DetectedGame);
     }
 
     public Object getRoot() {
@@ -74,7 +74,7 @@ public class GameTreeModel implements TreeModel {
             } else if (parent instanceof Devkit) {
                 final Devkit kit = (Devkit) parent;
                 Collection<?> keys =kit.getGameKeys();
-                List<Game> ret = new ArrayList<Game>();
+                List<DetectedGame> ret = new ArrayList<DetectedGame>();
                 for(Object k:keys){
                     ret.add(kit.getGame(k));
                 }

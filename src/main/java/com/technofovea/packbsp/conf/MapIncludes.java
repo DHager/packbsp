@@ -12,7 +12,7 @@
  */
 package com.technofovea.packbsp.conf;
 
-import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -74,9 +74,9 @@ public class MapIncludes {
         return ret;
     }
 
-    public Set<IncludeItem> getItems(Game game) {
-        final String gameName = game.getId();
-        final String engineName = game.getParent().getId();
+    public Set<IncludeItem> getItems(DetectedGame game) {
+        final String gameName = game.getName();
+        final String engineName = game.getParentKit().getId();
         Map<IncludeSet, Set<IncludeItem>> data = new HashMap<IncludeSet, Set<IncludeItem>>();
         if (getByName("game:" + gameName) != null) {
             recursiveFind("game:" + gameName, data);

@@ -7,8 +7,8 @@ package com.technofovea.packbsp.spring;
  *
  * @author Darien Hager
  */
-public interface IntlException {
+public interface NestedScopeListener {
 
-    public void setLocalizedMessage(String msg);
+    public void notifyInvalid(NestedScope source);
     
 }

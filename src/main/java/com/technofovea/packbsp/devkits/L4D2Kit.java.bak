@@ -73,7 +73,7 @@ public class L4D2Kit implements Devkit {
     }
 
     @Override
-    public String toString() {
+    public String getName() {
         return TITLE;
     }
 
@@ -89,7 +89,7 @@ public class L4D2Kit implements Devkit {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Game getGame(Object gameKey) throws GameConfException {
+    public DetectedGame getGame(Object gameKey) throws GameConfException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

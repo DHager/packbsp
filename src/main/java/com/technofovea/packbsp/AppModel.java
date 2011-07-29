@@ -45,10 +45,7 @@ import com.technofovea.packbsp.crawling.Node;
 import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
 import com.technofovea.packbsp.devkits.Devkit;
-import com.technofovea.packbsp.devkits.Game;
-import com.technofovea.packbsp.devkits.GameConfException;
-import com.technofovea.packbsp.devkits.SourceSDK;
-import com.technofovea.packbsp.devkits.SourceSDK.Engines;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.packaging.BspZipController;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -103,7 +100,7 @@ public class AppModel {
         STEAM,
         /**
          * Done: Parsed steam settings, found current user and SDK dir, parsed gameconfig
-         * Require: Engine and Game choice
+         * Require: Engine and DetectedGame choice
          */
         GAME,
         /**
@@ -142,7 +139,7 @@ public class AppModel {
     File _sourceBsp;
     File _sourceCopy;
     List<Devkit> _kits;
-    Game _chosenGame;
+    DetectedGame _chosenGame;
     GameInfoReader _gameInfoData;
     DependencyGraph _graph;
     Map<String, DependencyItem> _deps;
@@ -244,9 +241,7 @@ public class AppModel {
          */
         List<Devkit> kits = new ArrayList<Devkit>();
          /*
-         * Instantiate Source SDK kits
-         */
-        for (Engines e : SourceSDK.Engines.values()) {
+        for (Engine e : SourceSDK.Engine.values()) {
             try {
                 kits.add(SourceSDK.createKit(e, steamDir, reg, currentUser));
             }
@@ -254,6 +249,8 @@ public class AppModel {
                 logger.error("Problem instantiating SDK",ex);
             }
         }
+          * 
+          */
 
 
         currentPhase = Phase.GAME;
@@ -270,7 +267,7 @@ public class AppModel {
         return copy;
     }
 
-    public void acceptGame(final Game chosen) throws PackbspException, IllegalArgumentException {
+    public void acceptGame(final DetectedGame chosen) throws PackbspException, IllegalArgumentException {
         assertPhaseSameOrAfter(Phase.GAME);
 
         if (chosen == null) {
@@ -547,7 +544,7 @@ public class AppModel {
             }
         }
 
-        final File sdkToolsDir = _chosenGame.getParent().getBinDir();
+        final File sdkToolsDir = _chosenGame.getKitBinDir();
         final File bspzipExe = new File(sdkToolsDir, "bin/" + BSPZIP_FILENAME);
         final BspZipController bspzip = new BspZipController(bspzipExe);
         ByteArrayOutputStream resultStream = new ByteArrayOutputStream();

@@ -13,7 +13,7 @@
 package com.technofovea.packbsp.conf;
 
 import com.technofovea.packbsp.devkits.Devkit;
-import com.technofovea.packbsp.devkits.Game;
+import com.technofovea.packbsp.devkits.DetectedGame;
 import java.io.File;
 import java.util.HashSet;
 import java.util.Set;
@@ -81,13 +81,13 @@ public class MapIncludesTest {
             }
         });
 
-        final Game mockGame = context.mock(Game.class);
+        final DetectedGame mockGame = context.mock(DetectedGame.class);
         context.checking(new Expectations() {
 
             {
-                oneOf(mockGame).getId();
+                oneOf(mockGame).getName();
                 will(returnValue("Team Fortress 2"));
-                oneOf(mockGame).getParent();
+                oneOf(mockGame).getParentKit();
                 will(returnValue(mockKit));
             }
         });

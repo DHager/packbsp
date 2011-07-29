@@ -47,9 +47,67 @@
             <url>file://${basedir}/../mvn-repo/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
+    
+    <pluginRepositories>
+        <pluginRepository>
+            <id>maven-repository.dev.java.net</id>
+            <name>Java.net Maven 2 Repository</name>
+            <url>http://download.java.net/maven/2</url>
+        </pluginRepository>
+    </pluginRepositories>
 
     <build>
         <plugins>
+            <!--
+            <plugin>
+                <groupId>com.sun.tools.jxc.maven2</groupId>
+                <artifactId>maven-jaxb-schemagen-plugin</artifactId>
+                <version>1.2</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+
+                <configuration>
+                    
+                    <project>${project}</project>
+                    <destdir>${project.build.directory}/conf</destdir>
+                    <srcdir>${project.build.sourceDirectory}</srcdir>
+                    <includes>
+                        <include>com/technofovea/packbsp/conf/*</include>
+                    </includes>   
+                    
+                    <verbose>false</verbose>
+                    
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-impl</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>com.sun.xml.bind</groupId>
+                        <artifactId>jaxb-xjc</artifactId>
+                        <version>${javax.xml.bind.version}</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+            -->
             <plugin>
                 <groupId>com.google.code.maven-license-plugin</groupId>
                 <artifactId>maven-license-plugin</artifactId>
@@ -260,19 +318,18 @@
         </dependency>
 
 
-       <!--
+       
         <dependency>
             <groupId>javax.xml.bind</groupId>
             <artifactId>jaxb-api</artifactId>
-            <version>2.1</version>
+            <version>${javax.xml.bind.version}</version>
         </dependency>
 
         <dependency>
             <groupId>com.sun.xml.bind</groupId>
             <artifactId>jaxb-impl</artifactId>
-            <version>2.1.12</version>
+            <version>${javax.xml.bind.version}</version>
         </dependency>
-       -->
 
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -298,6 +355,8 @@
         <org.slf4j.version>1.6.1</org.slf4j.version>
         <com.technofovea.hl2parse.version>1.2.2-SNAPSHOT</com.technofovea.hl2parse.version>
         <net.sf.jung.version>2.0</net.sf.jung.version>
+        <javax.xml.bind.version>2.2.4</javax.xml.bind.version>
+
     </properties>
 </project>
 
