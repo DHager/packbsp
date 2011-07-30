@@ -19,12 +19,9 @@ public class NoopExceptionLocalizer implements ExceptionLocalizer {
     public static NoopExceptionLocalizer getInstance() {
         return instance;
     }
-    
-    public <T extends Throwable & IntlException> T localizeDefault(T ex, Object... arguments) {
-        return ex;
-    }
 
-    public <T extends IntlException> T localize(T ex, String code, Object... arguments) {
+    public <T extends IntlException> T localize(T ex) {
         return ex;
     }
+    
 }

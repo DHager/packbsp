@@ -23,7 +23,6 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
     private static final Logger logger = LoggerFactory.getLogger(GamePhaseFactory.class);
     protected NestedScope scope = null;
     protected ExceptionLocalizer localizer = NoopExceptionLocalizer.getInstance();
-   
     protected ApplicationContext parentContext = null;
     protected SteamPhase steamPhase;
     protected DetectedGame chosenGame;
@@ -37,8 +36,6 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
         Assert.notNull(localizer);
         Assert.notNull(parentContext);
     }
-    
-    
 
     protected void markDirty() {
         if (scope != null) {
@@ -62,7 +59,6 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
         this.localizer = localizer;
     }
 
-    
     public SteamPhase getSteamPhase() {
         return steamPhase;
     }
@@ -91,21 +87,26 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
     }
 
     public GamePhase createPhase() throws PhaseFailedException {
-        if (chosenProfile == null) {
-            throw localizer.localize(new PhaseFailedException("No profile selected"), "error.input.no_profile");
-        }
-        if (chosenGame == null) {
-            throw localizer.localize(new PhaseFailedException("No SDK game-choice selected"), "error.input.no_game");
-        }
-        if (!chosenGame.getParentKit().getId().equalsIgnoreCase(chosenProfile.getDevkit())) {
-            throw localizer.localize(new PhaseFailedException("Selected profile is not valid for this game"), "error.input.mismatched_profile");
-        }
+        try {
+            if (chosenProfile == null) {
+                throw new PhaseFailedException("No profile selected").addLocalization("error.input.no_profile");
+            }
+            if (chosenGame == null) {
+                throw new PhaseFailedException("No SDK game-choice selected").addLocalization("error.input.no_game");
+            }
+            if (!chosenGame.getParentKit().getId().equalsIgnoreCase(chosenProfile.getDevkit())) {
+                throw new PhaseFailedException("Selected profile is not valid for this game").addLocalization("error.input.mismatched_profile");
+            }
 
-        ApplicationContext child = initChildContext();
+            ApplicationContext child = initChildContext();
 
-        GamePhaseImpl ret = new GamePhaseImpl();
+            GamePhaseImpl ret = new GamePhaseImpl();
 
-        return ret;
+            return ret;
+        }
+        catch (PhaseFailedException ex) {
+            throw localizer.localize(ex);
+        }
     }
 
     protected ApplicationContext initChildContext() throws PhaseFailedException {
@@ -118,13 +119,13 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
         }
         catch (IllegalArgumentException e) {
             logger.error("Error instantiating profile", e);
-            throw localizer.localize(new PhaseFailedException("Error instantiating profile", e), "error.profile_loading");
+            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
         }
         catch (ClassCastException e) {
-            throw localizer.localize(new PhaseFailedException("Error instantiating profile", e), "error.profile_loading");
+            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
         }
         catch (NullPointerException e) {
-            throw localizer.localize(new PhaseFailedException("Error instantiating profile", e), "error.profile_loading");
+            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
         }
     }
 }

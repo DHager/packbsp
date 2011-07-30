@@ -4,6 +4,7 @@
 package com.technofovea.packbsp.spring;
 
 import java.util.Arrays;
+import java.util.Locale;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -20,20 +21,13 @@ public class DefaultExceptionLocalizer implements MessageSourceAware, Initializi
 
     private static final Logger logger = LoggerFactory.getLogger(DefaultExceptionLocalizer.class);
     protected MessageSource messageSource = null;
+    protected Locale locale = null;
 
     @Override
-    public <T extends Throwable & IntlException> T localizeDefault(T ex, Object... arguments) {
-        return localize(ex, ex.getMessage(), arguments);
-    }
-
-    @Override
-    public <T extends IntlException> T localize(T ex, String code, Object... arguments) {
-        if (arguments == null) {
-            arguments = new Object[0];
-        }
+    public <T extends IntlException> T localize(T ex) {
         String localized;
         try {
-            localized = messageSource.getMessage(code, arguments, null);
+            localized = messageSource.getMessage(ex.getLocalizationCode(), ex.getLocalizationArgs(), locale);
             ex.setLocalizedMessage(localized);
         }
         catch (NoSuchMessageException e) {

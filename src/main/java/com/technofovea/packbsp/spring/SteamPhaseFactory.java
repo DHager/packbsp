@@ -48,27 +48,46 @@ public class SteamPhaseFactory extends AbstractPackbspComponent {
     }
 
     public void setSteamDir(File steamDir) {
-        if (( steamDir != null ) && this.steamDir.equals(steamDir)) {
+        if (( this.steamDir != null ) && this.steamDir.equals(steamDir)) {
             return; // not a real change
         }
         this.steamDir = steamDir;
         markDirty();
     }
 
+    public RegistryFactory getRegistryFactory() {
+        return registryFactory;
+    }
+
+    public void setRegistryFactory(RegistryFactory registryFactory) {
+        this.registryFactory = registryFactory;
+    }
+
+    public SteamUserReader getUserDetector() {
+        return userDetector;
+    }
+
+    public void setUserDetector(SteamUserReader userDetector) {
+        this.userDetector = userDetector;
+    }
+
     public SteamPhase createPhase() throws PhaseFailedException {
-        if (steamDir == null || ( !steamDir.isDirectory() )) {
-            throw localizer.localize(new PhaseFailedException("Invalid Steam directory"), "error.input.invalid_steam_dir", steamDir);
+        try {
+            if (steamDir == null || ( !steamDir.isDirectory() )) {
+                throw new PhaseFailedException("Invalid Steam directory").addLocalization("error.input.invalid_steam_dir", steamDir);
+            }
+
+            logger.info("Opening clientregistry from Steam dir {}", steamDir);
+            final ClientRegistry reg = registryFactory.create(steamDir);
+            logger.info("Attempting to detect current user");
+            final String currentUser = userDetector.detectCurrentUser(steamDir);
+            
+            // If creation successful, notify scope to invalidate old item
+            SteamPhase ret = new SteamPhaseImpl(steamDir, reg, currentUser);
+            return ret;
         }
-
-        logger.info("Opening clientregistry from Steam dir {}", steamDir);
-        final ClientRegistry reg = registryFactory.create(steamDir);
-        logger.info("Attempting to detect current user");
-        final String currentUser = userDetector.detectCurrentUser(steamDir);
-
-
-        // If creation successful, notify scope to invalidate old item
-        SteamPhase ret = new SteamPhaseImpl(steamDir, reg, currentUser);
-        return ret;
-
+        catch (PhaseFailedException e) {
+            throw localizer.localize(e);
+        }
     }
 }

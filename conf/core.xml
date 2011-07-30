@@ -75,20 +75,26 @@
         <property name="registryKey" value="${steam.registry_installation_key}"/>
     </bean>
     
-    <bean id="registry-factory" class="com.technofovea.packbsp.spring.RegistryFactory" parent="abstract-component">
+    <bean id="registry-factory" class="com.technofovea.packbsp.spring.RegistryFactory">
     </bean> 
     
-    <bean id="user-detector" class="com.technofovea.packbsp.spring.SteamUserReader" parent="abstract-component">
+    <bean id="user-detector" class="com.technofovea.packbsp.spring.SteamUserReader">
         <property name="appDataPath" value="${steam.app_data_vdf}"/>
     </bean>
 
  
     <!--
-    Business logic objects
+    Steam loading stage
     -->
+    
+    <bean id="launcher" class="com.technofovea.packbsp.Launcher$LauncherTest">
+        <property name="f1" ref="steam-phase-factory"/>
+    </bean>
     
     <bean id="steam-phase-factory" class="com.technofovea.packbsp.spring.SteamPhaseFactory" parent="abstract-component">
         <property name="scope" ref="steam-scope"/>
+        <property name="registryFactory" ref="registry-factory"/>
+        <property name="userDetector" ref="user-detector"/>
     </bean>
     
     <bean id="steam-phase" factory-bean="steam-phase-factory" factory-method="createPhase" scope="steam">
@@ -98,9 +104,7 @@
     <bean id="current-user" factory-bean="steam-phase" factory-method="getCurrentUser" scope="prototype"/>
     <bean id="client-registry" factory-bean="steam-phase" factory-method="getRegistry" scope="prototype"/>
     <bean id="steam-directory" factory-bean="steam-phase" factory-method="getSteamDir" scope="prototype"/>
-
     
-        
     <bean id="devkit-loader" class="com.technofovea.packbsp.spring.KitLoader" scope="steam" parent="abstract-component">
         <property name="kitFactories">
             <list>
@@ -113,7 +117,9 @@
         </property>
     </bean>
     
+    <bean id="detected-games" factory-bean="devkit-loader" factory-method="loadGames" scope="steam"/>
     
+    <bean id="detected-profiles" factory-bean="profile-loader" factory-method="loadProfiles" scope="steam"/>
     
     
     

@@ -22,13 +22,12 @@ import org.springframework.util.Assert;
  *
  * @author Darien Hager
  */
-public class SteamUserReader extends AbstractPackbspComponent {
+public class SteamUserReader implements InitializingBean {
     
     private static final Logger logger = LoggerFactory.getLogger(SteamUserReader.class);
     protected String appDataPath = "config/SteamAppData.vdf";
     
     public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
         Assert.notNull(appDataPath);
     }
     
@@ -44,15 +43,15 @@ public class SteamUserReader extends AbstractPackbspComponent {
             SteamMetaReader smr = new SteamMetaReader(metaData);
             currentUser = smr.getAutoLogon();
             if ("".equals(currentUser)) {
-                throw localizer.localize(new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath()), "error.steam_not_running", steamAppData.getAbsolutePath());
+                throw new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath()).addLocalization("error.steam_not_running", steamAppData.getAbsolutePath());
             }
             logger.debug("Username detected as: {}", currentUser);
         }
         catch (IOException ex) {
-            throw localizer.localize(new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath(), ex), "error.steam_not_running", steamAppData.getAbsolutePath());
+            throw new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath(), ex).addLocalization("error.steam_not_running", steamAppData.getAbsolutePath());
         }
         catch (RecognitionException ex) {
-            throw localizer.localize(new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath(), ex), "error.steam_not_running", steamAppData.getAbsolutePath());
+            throw new PhaseFailedException("Could not read username from: " + steamAppData.getAbsolutePath(), ex).addLocalization("error.steam_not_running", steamAppData.getAbsolutePath());
         }
         return currentUser;
     }

@@ -16,20 +16,21 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 
 /**
  *
  * @author Darien Hager
  */
-public class RegistryFactory extends AbstractPackbspComponent{
+public class RegistryFactory  {
 
-    private static final Logger logger = LoggerFactory.getLogger(RegistryFactory.class);    
-    
+    private static final Logger logger = LoggerFactory.getLogger(RegistryFactory.class);
+
     public ClientRegistry create(File steamDir) throws PhaseFailedException {
         final String STEAM_BLOB_NAME = "clientregistry.blob";
         final File regFile = new File(steamDir, STEAM_BLOB_NAME);
         if (!regFile.isFile()) {
-            throw localizer.localize(new PhaseFailedException("Missing registry blob"), "error.input.no_clientregistry_blob", STEAM_BLOB_NAME);
+            throw new PhaseFailedException("Missing registry blob").addLocalization("error.input.no_clientregistry_blob", STEAM_BLOB_NAME);
         }
 
         logger.debug("Copying clientregistry from {}", regFile);
@@ -40,7 +41,7 @@ public class RegistryFactory extends AbstractPackbspComponent{
 
         }
         catch (IOException ex) {
-            throw localizer.localize(new PhaseFailedException("Couldn't copy client registry blob", ex), "error.cant_copy_blob");
+            throw new PhaseFailedException("Couldn't copy client registry blob", ex).addLocalization("error.cant_copy_blob");
         }
 
         logger.debug("Attempting to parse client registry blob", regCopy);
@@ -53,10 +54,10 @@ public class RegistryFactory extends AbstractPackbspComponent{
             reg = new ClientRegistry(bf);
         }
         catch (IOException ex) {
-            throw localizer.localize(new PhaseFailedException("Can't access blob file", ex), "error.cant_read_registry");
+            throw new PhaseFailedException("Can't access blob file", ex).addLocalization("error.cant_read_registry");
         }
         catch (BlobParseFailure ex) {
-            throw localizer.localize(new PhaseFailedException("Can't parse blob file", ex), "error.cant_parse_registry");
+            throw new PhaseFailedException("Can't parse blob file", ex).addLocalization("error.cant_parse_registry");
         }
 
         return reg;
@@ -73,5 +74,4 @@ public class RegistryFactory extends AbstractPackbspComponent{
         fos.close();
         return dest;
     }
-
 }

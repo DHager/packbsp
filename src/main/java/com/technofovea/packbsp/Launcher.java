@@ -3,15 +3,9 @@
  */
 package com.technofovea.packbsp;
 
-import com.technofovea.hl2parse.registry.ClientRegistry;
-import com.technofovea.packbsp.conf.ProfileList;
-import com.technofovea.packbsp.spring.GamePhaseFactory;
 import com.technofovea.packbsp.spring.PackbspApplicationContext;
-import com.technofovea.packbsp.spring.ProfileLoader;
-import com.technofovea.packbsp.spring.SteamDirectoryFinder;
-import com.technofovea.packbsp.spring.SteamPhase;
+import com.technofovea.packbsp.spring.PhaseFailedException;
 import com.technofovea.packbsp.spring.SteamPhaseFactory;
-import com.technofovea.packbsp.spring.SteamUserReader;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,36 +20,35 @@ import org.springframework.context.ApplicationContext;
 public class Launcher {
 
     private static Logger logger = LoggerFactory.getLogger(Launcher.class);
+    
+    public static class LauncherTest{
+        
+        protected SteamPhaseFactory f1;
+        
+        public void go() throws PhaseFailedException{
+            f1.setSteamDir(new File("c:/program files/steam/"));
+            f1.createPhase();
+        }
 
-    public static void main(String[] args) {
+        public SteamPhaseFactory getF1() {
+            return f1;
+        }
+
+        public void setF1(SteamPhaseFactory f1) {
+            this.f1 = f1;
+        }
+
+        
+        
+        
+    
+    }
+
+    public static void main(String[] args) throws Exception{
         List<String> beanPaths = new ArrayList<String>();
         List<String> propPaths = new ArrayList<String>();
-        beanPaths.add("templaunch.xml");
+        beanPaths.add("core.xml");
         ApplicationContext ctx = PackbspApplicationContext.create(beanPaths, propPaths, new File("conf"));
-
-        //ctx.getBean("user-detector", SteamUserReader.class).detectCurrentUser(new File("c:/program files/steam"));
-        //ctx.getBean("steamdir-detector", SteamDirectoryFinder.class).guessSteamDir();
-        //ctx.getBean("profile-loader", ProfileLoader.class);
-
-        ctx.getBean("steam-phase-factory",SteamPhaseFactory.class).setSteamDir(new File("c:/program files/steam"));
-        
-        System.out.println(ctx.getBean("steam-directory"));
-        //ClientRegistry cr = ctx.getBean("client-registry", ClientRegistry.class); 
-
-
-//        SteamPhaseFactory f1 = ctx.getBean("factory-steam", SteamPhaseFactory.class);
-//        GamePhaseFactory f2 = ctx.getBean("factory-game", GamePhaseFactory.class);
-//        SteamPhase p1 = ctx.getBean("phase-steam",SteamPhase.class);
-//        System.out.println(p1.getCurrentUser());
-//        System.out.println(p1.getGames());
-
-
-//        f2.setChosenGame(p1.getGames().iterator().next());
-        // f2.setChosenProfile(null);
-
-        //SteamPhase p = ctx.getBean("phase.steam",SteamPhase.class);
-        //System.out.println(p.getSteamDir());
-        //ctx.getBean("scope.steam",NestedScope.class).invalidateScope();
-
+        ctx.getBean("launcher",LauncherTest.class).go();
     }
 }

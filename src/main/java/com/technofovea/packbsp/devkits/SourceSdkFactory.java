@@ -22,13 +22,14 @@ import org.antlr.runtime.RecognitionException;
 import org.apache.commons.jxpath.JXPathException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
  *
  * @author Darien Hager
  */
-public class SourceSdkFactory extends AbstractPackbspComponent implements KitFactory<SourceSDK, DefaultGameImpl> {
+public class SourceSdkFactory implements InitializingBean, KitFactory<SourceSDK, DefaultGameImpl> {
 
     private static final Logger logger = LoggerFactory.getLogger(SourceSdkFactory.class);
     static final int APPID = 211;
@@ -56,7 +57,6 @@ public class SourceSdkFactory extends AbstractPackbspComponent implements KitFac
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
         Assert.notNull(steamDir);
         Assert.notNull(registry);
         Assert.notNull(currentUser);
@@ -106,7 +106,7 @@ public class SourceSdkFactory extends AbstractPackbspComponent implements KitFac
 
             }
             catch (BlobParseFailure ex) {
-                GameConfException gcex = localizer.localize(new GameConfException("Unable to parse blob", ex), "error.cant_parse_registry");
+                GameConfException gcex = new GameConfException("Unable to parse blob", ex).addLocalization("error.cant_parse_registry");
                 listener.devkitInitError(this, gcex);
                 continue;
             }
@@ -139,9 +139,9 @@ public class SourceSdkFactory extends AbstractPackbspComponent implements KitFac
 
 
         if (!engineBinDir.isDirectory()) {
-            throw localizer.localize(new GameConfException("Bin dir missing"), "error.sourcesdk.bad_bin_dir", subEngine.displayName, engineBinDir);
+            throw new GameConfException("Bin dir missing").addLocalization("error.sourcesdk.bad_bin_dir", subEngine.displayName, engineBinDir);
         } else if (!gameDataPath.isFile()) {
-            throw localizer.localize(new GameConfException("Gameconfig file missing"), "error.sourcesdk.bad_gameconfig", subEngine.displayName, gameDataPath);
+            throw new GameConfException("Gameconfig file missing").addLocalization("error.sourcesdk.bad_gameconfig", subEngine.displayName, gameDataPath);
         }
 
         try {
@@ -158,13 +158,13 @@ public class SourceSdkFactory extends AbstractPackbspComponent implements KitFac
             }
         }
         catch (IOException ex) {
-            throw localizer.localize(new GameConfException("Unable to read SDK's game-config file", ex), "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
+            throw new GameConfException("Unable to read SDK's game-config file", ex).addLocalization( "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
         }
         catch (RecognitionException ex) {
-            throw localizer.localize(new GameConfException("Unable to read SDK's game-config file", ex), "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
+            throw new GameConfException("Unable to read SDK's game-config file", ex).addLocalization( "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
         }
         catch (JXPathException ex) {
-            throw localizer.localize(new GameConfException("Unable to read SDK's game-config file", ex), "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
+            throw new GameConfException("Unable to read SDK's game-config file", ex).addLocalization( "error.sourcesdk.cant_read_gameconfig", subEngine.displayName, gameDataPath);
         }
         return k;
     }
@@ -201,13 +201,13 @@ public class SourceSdkFactory extends AbstractPackbspComponent implements KitFac
             g.giReader = new GameInfoReader(root, g.infoFile);
         }
         catch (IOException ex) {
-            throw localizer.localize(new GameConfException("Unable to read game-info file", ex), "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
+            throw new GameConfException("Unable to read game-info file", ex).addLocalization( "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
         }
         catch (RecognitionException ex) {
-            throw localizer.localize(new GameConfException("Unable to read game-info file", ex), "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
+            throw new GameConfException("Unable to read game-info file", ex).addLocalization( "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
         }
         catch (JXPathException ex) {
-            throw localizer.localize(new GameConfException("Unable to read game-info file", ex), "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
+            throw new GameConfException("Unable to read game-info file", ex).addLocalization( "error.sourcesdk.cant_read_gameinfo", g.getName(), g.infoFile);
         }
         return g;
     }

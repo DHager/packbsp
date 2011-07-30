@@ -11,6 +11,11 @@ import com.technofovea.packbsp.spring.IntlException;
  */
 public class GameConfException extends Exception implements IntlException {
 
+    protected String localizationCode = null;
+    protected Object[] localizationArgs= new Object[]{};
+    protected String localizedMessage = null;
+
+    
     public GameConfException(Throwable cause) {
         super(cause);
     }
@@ -25,7 +30,21 @@ public class GameConfException extends Exception implements IntlException {
 
     public GameConfException() {
     }
-    String localizedMessage = null;
+    
+    public GameConfException addLocalization(String code, Object... arguments) {
+        localizationCode = code;
+        localizationArgs = arguments;
+        localizedMessage = null;
+        return this;
+    }
+
+    public Object[] getLocalizationArgs() {
+        return localizationArgs;
+    }
+
+    public String getLocalizationCode() {
+        return localizationCode;
+    }    
 
     public void setLocalizedMessage(String localizedMessage) {
         this.localizedMessage = localizedMessage;
