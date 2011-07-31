@@ -13,48 +13,33 @@ import org.springframework.util.Assert;
  * 
  * @author Darien Hager
  */
-public class SteamPhaseFactory extends AbstractPackbspComponent {
+public class SteamPhaseUpdater extends AbstractPackbspComponent {
 
-    private static final Logger logger = LoggerFactory.getLogger(SteamPhaseFactory.class);
-    protected NestedScope scope = null;
-    protected File steamDir = null;
+    private static final Logger logger = LoggerFactory.getLogger(SteamPhaseUpdater.class);
+
     protected SteamUserReader userDetector;
     protected RegistryFactory registryFactory;
+    protected SteamPhase holder;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         super.afterPropertiesSet();
         Assert.notNull(userDetector);
         Assert.notNull(registryFactory);
+        Assert.notNull(holder);
 
     }
 
-    protected void markDirty() {
-        if (scope != null) {
-            scope.invalidateScope();
-        }
+    public SteamPhase getHolder() {
+        return holder;
     }
 
-    public NestedScope getScope() {
-        return scope;
+    public void setHolder(SteamPhase holder) {
+        this.holder = holder;
     }
 
-    public void setScope(NestedScope scope) {
-        this.scope = scope;
-    }
-
-    public File getSteamDir() {
-        return steamDir;
-    }
-
-    public void setSteamDir(File steamDir) {
-        if (( this.steamDir != null ) && this.steamDir.equals(steamDir)) {
-            return; // not a real change
-        }
-        this.steamDir = steamDir;
-        markDirty();
-    }
-
+    
+    
     public RegistryFactory getRegistryFactory() {
         return registryFactory;
     }
@@ -71,7 +56,7 @@ public class SteamPhaseFactory extends AbstractPackbspComponent {
         this.userDetector = userDetector;
     }
 
-    public SteamPhase createPhase() throws PhaseFailedException {
+    public void updatePhase(File steamDir) throws PhaseFailedException {
         try {
             if (steamDir == null || ( !steamDir.isDirectory() )) {
                 throw new PhaseFailedException("Invalid Steam directory").addLocalization("error.input.invalid_steam_dir", steamDir);
@@ -83,8 +68,9 @@ public class SteamPhaseFactory extends AbstractPackbspComponent {
             final String currentUser = userDetector.detectCurrentUser(steamDir);
             
             // If creation successful, notify scope to invalidate old item
-            SteamPhase ret = new SteamPhaseImpl(steamDir, reg, currentUser);
-            return ret;
+            holder.setSteamDir(steamDir);
+            holder.setRegistry(reg);
+            holder.setCurrentUser(currentUser);
         }
         catch (PhaseFailedException e) {
             throw localizer.localize(e);

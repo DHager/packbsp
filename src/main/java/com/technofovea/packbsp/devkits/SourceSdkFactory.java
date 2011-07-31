@@ -11,7 +11,7 @@ import com.technofovea.hl2parse.vdf.GameInfoReader;
 import com.technofovea.hl2parse.vdf.SloppyParser;
 import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
-import com.technofovea.packbsp.spring.AbstractPackbspComponent;
+import com.technofovea.packbsp.spring.SteamPhase;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -51,46 +51,28 @@ public class SourceSdkFactory implements InitializingBean, KitFactory<SourceSDK,
             this.dirName = dirName;
         }
     }
-    protected File steamDir;
-    protected ClientRegistry registry;
-    protected String currentUser;
+    protected SteamPhase phaseData;
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(steamDir);
-        Assert.notNull(registry);
-        Assert.notNull(currentUser);
+        Assert.notNull(phaseData);
     }
 
-    public String getCurrentUser() {
-        return currentUser;
+    public SteamPhase getPhaseData() {
+        return phaseData;
     }
 
-    public void setCurrentUser(String currentUser) {
-        this.currentUser = currentUser;
+    public void setPhaseData(SteamPhase phaseData) {
+        this.phaseData = phaseData;
     }
-
-    public ClientRegistry getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(ClientRegistry registry) {
-        this.registry = registry;
-    }
-
-    
-
-    public File getSteamDir() {
-        return steamDir;
-    }
-
-    public void setSteamDir(File steamDir) {
-        this.steamDir = steamDir;
-    }
-    
-    
+   
 
     public Set<SourceSDK> createKits(GameErrorListener listener) {
+        final ClientRegistry registry = phaseData.getRegistry();
+        final String currentUser = phaseData.getCurrentUser();
+        final File steamDir = phaseData.getSteamDir();
+        //TODO assert suitability of main three
+        
         CdrParser cdr = registry.getContentDescriptionRecord();
         Set<SourceSDK> kits = new HashSet<SourceSDK>();
         for (Engine subEngine : Engine.values()) {

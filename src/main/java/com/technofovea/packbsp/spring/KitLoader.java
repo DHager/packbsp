@@ -15,13 +15,14 @@ import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
 /**
  *
  * @author Darien Hager
  */
-public class KitLoader extends AbstractPackbspComponent {
+public class KitLoader implements InitializingBean {
 
     private static class NoopListener implements GameErrorListener {
 
@@ -38,9 +39,7 @@ public class KitLoader extends AbstractPackbspComponent {
     protected GameErrorListener gameErrorListener = new NoopListener();
     protected List<KitFactory> kitFactories;
 
-    @Override
     public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
         Assert.notNull(gameErrorListener);
         Assert.notNull(kitFactories);
 

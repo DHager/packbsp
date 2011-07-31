@@ -60,18 +60,14 @@
     </bean>
     
     <bean id="exceptionLocalizer" class="com.technofovea.packbsp.spring.DefaultExceptionLocalizer" depends-on="messageSource"/>        
-
-    <bean id="abstract-component" abstract="true">
-        <property name="localizer" ref="exceptionLocalizer"/>
-    </bean>
     
-    <!-- Basic environment components -->
+    <!-- Basic tool components -->
     
-    <bean id="profile-loader" class="com.technofovea.packbsp.spring.ProfileLoader" parent="abstract-component">
+    <bean id="profile-loader" class="com.technofovea.packbsp.spring.ProfileLoader">
         <property name="dataPath" value="${packbsp.profile_location}"/>
     </bean>
     
-    <bean id="steamdir-detector" class="com.technofovea.packbsp.spring.SteamDirectoryFinder" parent="abstract-component">
+    <bean id="steamdir-detector" class="com.technofovea.packbsp.spring.SteamDirectoryFinder">
         <property name="registryKey" value="${steam.registry_installation_key}"/>
     </bean>
     
@@ -82,40 +78,39 @@
         <property name="appDataPath" value="${steam.app_data_vdf}"/>
     </bean>
 
+    <!--
+    State-holding beans
+    -->
+    
+    <bean id="steam-phase" class="com.technofovea.packbsp.spring.SteamPhaseImpl">
+    </bean>
  
     <!--
     Steam loading stage
     -->
     
     <bean id="launcher" class="com.technofovea.packbsp.Launcher$LauncherTest">
-        <property name="f1" ref="steam-phase-factory"/>
+        <property name="localizer" ref="exceptionLocalizer"/>
+        <property name="steamUpdater" ref="steam-phase-updater"/>
+        <property name="kitLoader" ref="devkit-loader"/>
     </bean>
     
-    <bean id="steam-phase-factory" class="com.technofovea.packbsp.spring.SteamPhaseFactory" parent="abstract-component">
-        <property name="scope" ref="steam-scope"/>
+    <bean id="steam-phase-updater" class="com.technofovea.packbsp.spring.SteamPhaseUpdater">
         <property name="registryFactory" ref="registry-factory"/>
         <property name="userDetector" ref="user-detector"/>
+        <property name="holder" ref="steam-phase"/>
     </bean>
-    
-    <bean id="steam-phase" factory-bean="steam-phase-factory" factory-method="createPhase" scope="steam">
-        <aop:scoped-proxy proxy-target-class="false"/>
-    </bean>
-    
-    <bean id="current-user" factory-bean="steam-phase" factory-method="getCurrentUser" scope="prototype"/>
-    <bean id="client-registry" factory-bean="steam-phase" factory-method="getRegistry" scope="prototype"/>
-    <bean id="steam-directory" factory-bean="steam-phase" factory-method="getSteamDir" scope="prototype"/>
-    
-    <bean id="devkit-loader" class="com.technofovea.packbsp.spring.KitLoader" scope="steam" parent="abstract-component">
+        
+    <bean id="devkit-loader" class="com.technofovea.packbsp.spring.KitLoader">
         <property name="kitFactories">
-            <list>
+            <list>                
                 <bean class="com.technofovea.packbsp.devkits.SourceSdkFactory">
-                    <property name="steamDir" ref="steam-directory"/>
-                    <property name="currentUser" ref="current-user"/>
-                    <property name="registry" ref="client-registry"/>
+                    <property name="phaseData" ref="steam-phase"/>
                 </bean>
             </list>
         </property>
     </bean>
+    
     
     <bean id="detected-games" factory-bean="devkit-loader" factory-method="loadGames" scope="steam"/>
     

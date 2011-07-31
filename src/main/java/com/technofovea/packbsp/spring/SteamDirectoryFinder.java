@@ -15,7 +15,7 @@ import org.springframework.util.Assert;
  *
  * @author Darien Hager
  */
-public class SteamDirectoryFinder extends AbstractPackbspComponent{
+public class SteamDirectoryFinder implements InitializingBean{
 
     private static final Logger logger = LoggerFactory.getLogger(SteamDirectoryFinder.class);
     protected final String DEFAULT_REGISTRY_PATH = "HKCU\\Software\\Valve\\Steam\\SteamPath";
@@ -27,7 +27,6 @@ public class SteamDirectoryFinder extends AbstractPackbspComponent{
     }
 
     public void afterPropertiesSet() throws Exception {
-        super.afterPropertiesSet();
         Assert.notNull(registryKey);
     }
 

@@ -10,12 +10,17 @@ import java.io.File;
  *
  * @author Darien Hager
  */
-public interface SteamPhase {
+public interface SteamPhase extends BasicPhase {
 
-    public File getSteamDir();
+    public String getCurrentUser();
 
     public ClientRegistry getRegistry();
 
-    public String getCurrentUser();
-    
+    public File getSteamDir();
+
+    public void setCurrentUser(String currentUser);
+
+    public void setRegistry(ClientRegistry registry);
+
+    public void setSteamDir(File steamDir);
 }
