@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <profiles>
-    <profile name="a">
-        <description>atest</description>
-    </profile>
-    <profile name="b">
-        <description>btest</description>
+    <profile name="Team Fortress 2" devkit="source_sdk_orangebox">
+        <description>Team Fortress 2</description>
+        <configs>
+            <file>tf2.xml</file>
+        </configs>
+        <properties>
+            <file>tf2.properties</file>
+        </properties>
     </profile>
 </profiles>

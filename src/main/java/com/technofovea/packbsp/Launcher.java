@@ -51,9 +51,16 @@ public class Launcher {
                 steamUpdater.updatePhase(new File("c:/program files/steam/"));
                 //f1.createPhase();
                 Set<DetectedGame> games = kitLoader.loadGames();
+                System.out.println(games);
                 List<Profile> profiles = profileLoader.loadProfiles();
-                
-                gameUpdater.updatePhase(games.iterator().next(), profiles.get(0));
+
+                Profile p = profiles.get(0);
+                for (DetectedGame g : games) {
+                    if (g.getParentKit().getId().equalsIgnoreCase(p.getDevkit())) {
+                        gameUpdater.updatePhase(g, p);
+                        break;
+                    }
+                }
             }
             catch (PhaseFailedException ex) {
                 throw localizer.localize(ex);

@@ -27,7 +27,9 @@ public class DefaultExceptionLocalizer implements MessageSourceAware, Initializi
     public <T extends IntlException> T localize(T ex) {
         String localized;
         try {
-            localized = messageSource.getMessage(ex.getLocalizationCode(), ex.getLocalizationArgs(), locale);
+            String code = ex.getLocalizationCode();
+            logger.debug("Localizing code {}",code);
+            localized = messageSource.getMessage(code, ex.getLocalizationArgs(), locale);
             ex.setLocalizedMessage(localized);
         }
         catch (NoSuchMessageException e) {

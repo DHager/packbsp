@@ -9,6 +9,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -50,7 +51,7 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
                 throw new PhaseFailedException("Selected profile is not valid for this game").addLocalization("error.input.mismatched_profile");
             }
 
-//            ApplicationContext child = initChildContext(chosenProfile);
+            ApplicationContext child = initChildContext(chosenProfile);
 
             //Modify target state
             throw new PhaseFailedException("Not yet implemented");
@@ -68,18 +69,11 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
         try {
             return PackbspApplicationContext.create(beanPaths, propPaths, parentContext);
         }
-        catch (IllegalArgumentException e) {
+        catch (BeanDefinitionStoreException e) {
             logger.error("Error instantiating profile", e);
-            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
-        }
-        catch (ClassCastException e) {
-            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
-        }
-        catch (NullPointerException e) {
-            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
+            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading",chosenProfile.getName());
         }
     }
-
     public SteamState getSourceState() {
         return sourceState;
     }

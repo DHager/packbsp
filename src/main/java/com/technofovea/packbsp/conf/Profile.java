@@ -3,6 +3,7 @@
  */
 package com.technofovea.packbsp.conf;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -43,11 +44,11 @@ public class Profile {
     }
 
     public List<String> getBeanFiles() {
-        return Collections.unmodifiableList(beanFiles);
+        return new ArrayList<String>(beanFiles);
     }
 
     public List<String> getPropertyFiles() {
-        return Collections.unmodifiableList(propFiles);
+        return new ArrayList<String>(propFiles);
     }
 
     @Override
