@@ -64,7 +64,7 @@
     <!-- Basic tool components -->
     
     <bean id="profile-loader" class="com.technofovea.packbsp.spring.ProfileLoader">
-        <property name="dataPath" value="${packbsp.profile_location}"/>
+        <property name="source" value="${packbsp.profile_location}"/>
     </bean>
     
     <bean id="steamdir-detector" class="com.technofovea.packbsp.spring.SteamDirectoryFinder">
