@@ -10,7 +10,7 @@ import java.io.File;
  *
  * @author Darien Hager
  */
-public interface SteamPhase extends BasicPhase {
+public interface SteamState extends BasicState {
 
     public String getCurrentUser();
 

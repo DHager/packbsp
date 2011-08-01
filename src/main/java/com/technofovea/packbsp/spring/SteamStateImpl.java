@@ -10,7 +10,7 @@ import java.io.File;
  *
  * @author Darien Hager
  */
-class SteamPhaseImpl extends AbstractPhase implements SteamPhase {
+class SteamStateImpl extends AbstractState implements SteamState {
     
     File steamDir;
     ClientRegistry registry;

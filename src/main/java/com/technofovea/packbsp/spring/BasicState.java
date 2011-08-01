@@ -7,7 +7,7 @@ package com.technofovea.packbsp.spring;
  *
  * @author Darien Hager
  */
-public interface BasicPhase {
+public interface BasicState {
 
     public boolean isComplete();
     

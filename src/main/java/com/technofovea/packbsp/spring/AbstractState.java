@@ -7,7 +7,7 @@ package com.technofovea.packbsp.spring;
  *
  * @author Darien Hager
  */
-public abstract class AbstractPhase implements BasicPhase{
+public abstract class AbstractState implements BasicState{
     protected NestedScope linkedScope;
     
     protected void markDirty(){

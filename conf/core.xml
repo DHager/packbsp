@@ -82,19 +82,32 @@
     State-holding beans
     -->
     
-    <bean id="steam-phase" class="com.technofovea.packbsp.spring.SteamPhaseImpl">
+    <bean id="steam-phase" class="com.technofovea.packbsp.spring.SteamStateImpl">
+        <!-- Changes to the phase-holder will cause the linked scope to reset -->
+        <property name="linkedScope" ref="steam-scope"/>
+    </bean>
+    <bean id="game-phase" class="com.technofovea.packbsp.spring.GameStateImpl">
+        <!-- Changes to the phase-holder will cause the linked scope to reset -->
+        <property name="linkedScope" ref="game-scope"/>
     </bean>
  
     <!--
-    Steam loading stage
+    Main kickoff
     -->
     
     <bean id="launcher" class="com.technofovea.packbsp.Launcher$LauncherTest">
         <property name="localizer" ref="exceptionLocalizer"/>
         <property name="steamUpdater" ref="steam-phase-updater"/>
+        <property name="gameUpdater" ref="game-phase-updater"/>
         <property name="kitLoader" ref="devkit-loader"/>
+        <property name="profileLoader" ref="profile-loader"/>
     </bean>
-    
+
+ 
+    <!--
+    Steam loading stage
+    -->
+       
     <bean id="steam-phase-updater" class="com.technofovea.packbsp.spring.SteamPhaseUpdater">
         <property name="registryFactory" ref="registry-factory"/>
         <property name="userDetector" ref="user-detector"/>
@@ -111,12 +124,14 @@
         </property>
     </bean>
     
-    
-    <bean id="detected-games" factory-bean="devkit-loader" factory-method="loadGames" scope="steam"/>
-    
-    <bean id="detected-profiles" factory-bean="profile-loader" factory-method="loadProfiles" scope="steam"/>
-    
-    
+    <!--
+    Game/Profile choice stage 
+    -->
+    <bean id="game-phase-updater" class="com.technofovea.packbsp.spring.GamePhaseUpdater">
+        <property name="localizer" ref="exceptionLocalizer"/>
+        <property name="sourceState" ref="steam-phase"/>
+        <property name="targetState" ref="game-phase"/>
+    </bean>
     
     
 </beans>

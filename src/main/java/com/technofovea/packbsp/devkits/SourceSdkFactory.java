@@ -11,7 +11,7 @@ import com.technofovea.hl2parse.vdf.GameInfoReader;
 import com.technofovea.hl2parse.vdf.SloppyParser;
 import com.technofovea.hl2parse.vdf.ValveTokenLexer;
 import com.technofovea.hl2parse.vdf.VdfRoot;
-import com.technofovea.packbsp.spring.SteamPhase;
+import com.technofovea.packbsp.spring.SteamState;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
@@ -51,18 +51,18 @@ public class SourceSdkFactory implements InitializingBean, KitFactory<SourceSDK,
             this.dirName = dirName;
         }
     }
-    protected SteamPhase phaseData;
+    protected SteamState phaseData;
 
     @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(phaseData);
     }
 
-    public SteamPhase getPhaseData() {
+    public SteamState getPhaseData() {
         return phaseData;
     }
 
-    public void setPhaseData(SteamPhase phaseData) {
+    public void setPhaseData(SteamState phaseData) {
         this.phaseData = phaseData;
     }
    

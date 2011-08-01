@@ -19,7 +19,7 @@ public class SteamPhaseUpdater extends AbstractPackbspComponent {
 
     protected SteamUserReader userDetector;
     protected RegistryFactory registryFactory;
-    protected SteamPhase holder;
+    protected SteamState holder;
 
     @Override
     public void afterPropertiesSet() throws Exception {
@@ -30,11 +30,11 @@ public class SteamPhaseUpdater extends AbstractPackbspComponent {
 
     }
 
-    public SteamPhase getHolder() {
+    public SteamState getHolder() {
         return holder;
     }
 
-    public void setHolder(SteamPhase holder) {
+    public void setHolder(SteamState holder) {
         this.holder = holder;
     }
 

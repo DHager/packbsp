@@ -18,75 +18,27 @@ import org.springframework.util.Assert;
  *
  * @author Darien Hager
  */
-public class GamePhaseFactory implements ApplicationContextAware, InitializingBean {
+public class GamePhaseUpdater extends AbstractPackbspComponent implements ApplicationContextAware, InitializingBean {
 
-    private static final Logger logger = LoggerFactory.getLogger(GamePhaseFactory.class);
-    protected NestedScope scope = null;
-    protected ExceptionLocalizer localizer = NoopExceptionLocalizer.getInstance();
+    private static final Logger logger = LoggerFactory.getLogger(GamePhaseUpdater.class);
     protected ApplicationContext parentContext = null;
-    protected SteamPhase steamPhase;
-    protected DetectedGame chosenGame;
-    protected Profile chosenProfile;
-
+    
+    protected SteamState sourceState;
+    protected GameState targetState;
+    
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         parentContext = applicationContext;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
-        Assert.notNull(localizer);
+        super.afterPropertiesSet();
+        Assert.notNull(sourceState);
+        Assert.notNull(targetState);
         Assert.notNull(parentContext);
     }
 
-    protected void markDirty() {
-        if (scope != null) {
-            scope.invalidateScope();
-        }
-    }
-
-    public NestedScope getScope() {
-        return scope;
-    }
-
-    public void setScope(NestedScope scope) {
-        this.scope = scope;
-    }
-
-    public ExceptionLocalizer getLocalizer() {
-        return localizer;
-    }
-
-    public void setLocalizer(ExceptionLocalizer localizer) {
-        this.localizer = localizer;
-    }
-
-    public SteamPhase getSteamPhase() {
-        return steamPhase;
-    }
-
-    public void setSteamPhase(SteamPhase steamPhase) {
-        this.markDirty();
-        this.steamPhase = steamPhase;
-    }
-
-    public DetectedGame getChosenGame() {
-        return chosenGame;
-    }
-
-    public void setChosenGame(DetectedGame chosenGame) {
-        this.markDirty();
-        this.chosenGame = chosenGame;
-    }
-
-    public Profile getChosenProfile() {
-        return chosenProfile;
-    }
-
-    public void setChosenProfile(Profile chosenProfile) {
-        this.markDirty();
-        this.chosenProfile = chosenProfile;
-    }
-
-    public GamePhase createPhase() throws PhaseFailedException {
+    public void updatePhase(DetectedGame chosenGame, Profile chosenProfile) throws PhaseFailedException {
         try {
             if (chosenProfile == null) {
                 throw new PhaseFailedException("No profile selected").addLocalization("error.input.no_profile");
@@ -98,18 +50,17 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
                 throw new PhaseFailedException("Selected profile is not valid for this game").addLocalization("error.input.mismatched_profile");
             }
 
-            ApplicationContext child = initChildContext();
+//            ApplicationContext child = initChildContext(chosenProfile);
 
-            GamePhaseImpl ret = new GamePhaseImpl();
-
-            return ret;
+            //Modify target state
+            throw new PhaseFailedException("Not yet implemented");
         }
         catch (PhaseFailedException ex) {
             throw localizer.localize(ex);
         }
     }
 
-    protected ApplicationContext initChildContext() throws PhaseFailedException {
+    protected ApplicationContext initChildContext(Profile chosenProfile) throws PhaseFailedException {
         logger.info("Creating profile-context for {}", chosenProfile.getName());
         List<String> beanPaths = chosenProfile.getBeanFiles();
         List<String> propPaths = chosenProfile.getPropertyFiles();
@@ -128,4 +79,22 @@ public class GamePhaseFactory implements ApplicationContextAware, InitializingBe
             throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading");
         }
     }
+
+    public SteamState getSourceState() {
+        return sourceState;
+    }
+
+    public void setSourceState(SteamState sourceState) {
+        this.sourceState = sourceState;
+    }
+
+    public GameState getTargetState() {
+        return targetState;
+    }
+
+    public void setTargetState(GameState targetState) {
+        this.targetState = targetState;
+    }
+    
+    
 }
