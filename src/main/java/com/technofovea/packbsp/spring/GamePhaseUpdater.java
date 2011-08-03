@@ -53,8 +53,16 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
 
             ApplicationContext child = initChildContext(chosenProfile);
 
+            // Pull out expected beans
+            
+            System.out.println(child.getBean("test",String.class));
+                        System.out.println(child.getBean("exceptionLocalizer",ExceptionLocalizer.class));
+
+            targetState.setActiveGame(chosenGame);
+            targetState.setActiveProfile(chosenProfile);
+            targetState.setGameContext(child);
+            targetState.setExplorer(null); //TODO
             //Modify target state
-            throw new PhaseFailedException("Not yet implemented");
         }
         catch (PhaseFailedException ex) {
             throw localizer.localize(ex);
@@ -66,6 +74,7 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
         List<String> beanPaths = chosenProfile.getBeanFiles();
         List<String> propPaths = chosenProfile.getPropertyFiles();
         beanPaths.add(0, "profiles/base.xml");
+        propPaths.add(0,"profiles/base.properties");
         try {
             return PackbspApplicationContext.create(beanPaths, propPaths, parentContext);
         }

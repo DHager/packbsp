@@ -3,10 +3,10 @@
     <profile name="Team Fortress 2" devkit="source_sdk_orangebox">
         <description>Team Fortress 2</description>
         <configs>
-            <file>tf2.xml</file>
+            <file>profiles/tf2.xml</file>
         </configs>
         <properties>
-            <file>tf2.properties</file>
+            <file>profiles/tf2.properties</file>
         </properties>
     </profile>
 </profiles>

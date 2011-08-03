@@ -6,6 +6,7 @@ package com.technofovea.packbsp.spring;
 import com.technofovea.packbsp.conf.Profile;
 import com.technofovea.packbsp.crawling2.GraphExplorer;
 import com.technofovea.packbsp.devkits.DetectedGame;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -15,7 +16,7 @@ public class GameStateImpl extends AbstractState implements GameState {
 
     protected Profile activeProfile;
     protected DetectedGame activeGame;
-    protected PackbspApplicationContext gameContext;
+    protected ApplicationContext gameContext;
     protected GraphExplorer explorer;
 
     public boolean isComplete() {
@@ -57,12 +58,12 @@ public class GameStateImpl extends AbstractState implements GameState {
     }
 
     @Override
-    public PackbspApplicationContext getGameContext() {
+    public ApplicationContext getGameContext() {
         return gameContext;
     }
 
     @Override
-    public void setGameContext(PackbspApplicationContext gameContext) {
+    public void setGameContext(ApplicationContext gameContext) {
         this.gameContext = gameContext;
     }
     

@@ -110,9 +110,8 @@ public class Launcher {
 
     public static void main(String[] args) throws Exception {
         List<String> beanPaths = new ArrayList<String>();
-        List<String> propPaths = new ArrayList<String>();
         beanPaths.add("core.xml");
-        ApplicationContext ctx = PackbspApplicationContext.create(beanPaths, propPaths, new File("conf"));
+        ApplicationContext ctx = PackbspApplicationContext.createRoot(beanPaths, new File("conf"));
         ctx.getBean("launcher", LauncherTest.class).go();
 
     }

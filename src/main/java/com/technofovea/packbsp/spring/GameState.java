@@ -6,6 +6,7 @@ package com.technofovea.packbsp.spring;
 import com.technofovea.packbsp.conf.Profile;
 import com.technofovea.packbsp.crawling2.GraphExplorer;
 import com.technofovea.packbsp.devkits.DetectedGame;
+import org.springframework.context.ApplicationContext;
 
 /**
  *
@@ -19,7 +20,7 @@ public interface GameState extends BasicState {
 
     public GraphExplorer getExplorer();
 
-    public PackbspApplicationContext getGameContext();
+    public ApplicationContext getGameContext();
 
     void setActiveGame(DetectedGame activeGame);
 
@@ -27,6 +28,6 @@ public interface GameState extends BasicState {
 
     void setExplorer(GraphExplorer explorer);
 
-    void setGameContext(PackbspApplicationContext gameContext);
+    void setGameContext(ApplicationContext gameContext);
     
 }

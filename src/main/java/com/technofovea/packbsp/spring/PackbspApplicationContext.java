@@ -4,11 +4,14 @@
 package com.technofovea.packbsp.spring;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
-import org.springframework.beans.factory.support.PropertiesBeanDefinitionReader;
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 
 /**
  *
@@ -23,7 +26,15 @@ public class PackbspApplicationContext extends GenericApplicationContext {
     protected PackbspApplicationContext() {
     }
 
-    public static PackbspApplicationContext create(List<String> beanPaths, List<String> propertyPaths, File confdir) {
+    protected static Resource[] pathsToResources(ResourceLoader loader, List<String> paths) {
+        List<Resource> ret = new ArrayList<Resource>(paths.size());
+        for (String p : paths) {
+            ret.add(loader.getResource(p));
+        }
+        return ret.toArray(new Resource[ret.size()]);
+    }
+
+    public static PackbspApplicationContext createRoot(List<String> beanPaths, File confdir) {
         HybridResourceLoader loader = new HybridResourceLoader();
         loader.setRelativeFile(confdir);
 
@@ -34,12 +45,19 @@ public class PackbspApplicationContext extends GenericApplicationContext {
         for (String path : beanPaths) {
             xmlReader.loadBeanDefinitions(path);
         }
-        PropertiesBeanDefinitionReader propReader = new PropertiesBeanDefinitionReader(ctx);
-        propReader.setResourceLoader(loader);
-        for (String path : propertyPaths) {
-            propReader.loadBeanDefinitions(path);
-        }
-
+/*
+        PropertyPlaceholderConfigurer pc = new PropertyPlaceholderConfigurer();
+        pc.setLocations(pathsToResources(loader, propertyPaths));
+        pc.setIgnoreUnresolvablePlaceholders(false);
+        pc.postProcessBeanFactory(ctx.getBeanFactory());
+  */      
+        // Validating configurer
+//        PropertyPlaceholderConfigurer vpc = new PropertyPlaceholderConfigurer();
+ //       vpc.setOrder(10000);
+  //      vpc.postProcessBeanFactory(ctx.getBeanFactory());
+        
+        
+        
         ctx.refresh();
         return ctx;
 
@@ -53,12 +71,10 @@ public class PackbspApplicationContext extends GenericApplicationContext {
         for (String path : beanPaths) {
             xmlReader.loadBeanDefinitions(path);
         }
-        PropertiesBeanDefinitionReader propReader = new PropertiesBeanDefinitionReader(ctx);
-        propReader.setResourceLoader(parent);
-        for (String path : propertyPaths) {
-            propReader.loadBeanDefinitions(path);
-        }
-
+        PropertyPlaceholderConfigurer pc = new PropertyPlaceholderConfigurer();
+        pc.setLocations(pathsToResources(parent, propertyPaths));
+        pc.postProcessBeanFactory(ctx.getBeanFactory());
+        
         ctx.refresh();
         return ctx;
     }

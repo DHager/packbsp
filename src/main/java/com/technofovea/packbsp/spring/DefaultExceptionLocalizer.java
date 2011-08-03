@@ -28,7 +28,9 @@ public class DefaultExceptionLocalizer implements MessageSourceAware, Initializi
         String localized;
         try {
             String code = ex.getLocalizationCode();
-            logger.debug("Localizing code {}",code);
+            if(code==null){
+                logger.warn("Null code encountered",ex);
+            }
             localized = messageSource.getMessage(code, ex.getLocalizationArgs(), locale);
             ex.setLocalizedMessage(localized);
         }
