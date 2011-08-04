@@ -10,10 +10,6 @@
  * Permissions beyond the scope of this license may be available
  * at http://technofovea.com/ .
  */
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.technofovea.packbsp.assets;
 
 import com.technofovea.packbsp.*;
@@ -24,6 +20,7 @@ import com.technofovea.hl2parse.registry.CdrParser.AppDependency;
 import com.technofovea.hl2parse.registry.ClientRegistry;
 import com.technofovea.hllib.methods.ManagedLibrary;
 import com.technofovea.packbsp.assets.AssetSource.Type;
+import com.technofovea.packbsp.spring.GameInfoData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -37,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A default implemention of an asset locator.
- * 
+ * @todo Bean-ify
  * @author Darien Hager
  */
 public class BasicLocator implements AssetLocator {
@@ -51,7 +48,7 @@ public class BasicLocator implements AssetLocator {
     Set<String> operatingSystems;
     CdrParser cdr;
     ManagedLibrary lib;
-    GameInfoReader gameInfoData;
+    GameInfoData gameInfoData;
     File steamApps;
     int mainAppId;
     List<Integer> dependencyIds = new ArrayList<Integer>();
@@ -62,29 +59,32 @@ public class BasicLocator implements AssetLocator {
     /**
      * Creates a new locator in the context of examining a particular map.
      *
-     * @param gameInfoData The game-info data that specifies search locations, prefixes, and ordering.
+     * @param gameInfo The game-info data that specifies search locations, prefixes, and ordering.
      * @param steamapps The folder which contains Stream's archive files.
      * @param reg An object for accessing Steam's metadata for dependencies and GCF provisioning
      * @param lib An object for doing I/O against various compressed file formats
      * @param bspFile The map being used as another source of assets
      * @throws PackbspException If a problem occurred accessing files or interpreting data.
      */
-    public BasicLocator(GameInfoReader gameInfoData, File steamapps, ClientRegistry reg, ManagedLibrary lib) throws PackbspException {
+    public BasicLocator(GameInfoData gameInfo, File steamapps, ClientRegistry reg, ManagedLibrary lib) throws PackbspException {
 
         this.operatingSystems = new HashSet<String>();
         this.operatingSystems.add("windows");     //TODO for mac-compatibility have a way of detecting the OS
 
-        this.gameInfoData = gameInfoData;
+        this.gameInfoData = gameInfo;
+        if(!steamapps.isDirectory()){
+            throw new PackbspException("Invalid steam app folder");
+        }
         this.steamApps = steamapps;
         this.lib = lib;
         this.cdr = reg.getContentDescriptionRecord();
 
         // Determine appid, and any orange-box AdditionalContentId items
-        mainAppId = gameInfoData.getSteamAppId();
-        dependencyIds = gameInfoData.getAdditionalIds();
+        mainAppId = gameInfo.getAppId();
+        dependencyIds = gameInfo.getExtraIds();
 
         // Process out the search paths
-        searchPaths = processGameinfoPaths(gameInfoData.getSearchPaths());
+        searchPaths = processGameinfoPaths(gameInfo.getSearchPaths());
 
 
         // Remove dupes
@@ -174,7 +174,7 @@ public class BasicLocator implements AssetLocator {
                 logger.debug("Path is relative to the gameinfo file's directory");
                 path = path.substring(rel_gameinfo.length());
                 // Relative to Gameinfo location
-                File temp = gameInfoData.getSourceFile().getParentFile();
+                File temp = gameInfoData.getSource().getParentFile();
                 List<AssetSearchLocation> relFolder = makeDiskSource(temp);
                 ret.addAll(relFolder);
 

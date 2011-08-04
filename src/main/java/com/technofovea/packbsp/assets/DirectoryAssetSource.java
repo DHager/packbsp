@@ -65,6 +65,13 @@ public class DirectoryAssetSource implements AssetSource {
         return new File(target,relativePath);
     }
 
+    @Override
+    public String toString() {
+        return "DirectoryAssetSource{" + "target=" + target + '}';
+    }
+    
+    
+
 
 
 }

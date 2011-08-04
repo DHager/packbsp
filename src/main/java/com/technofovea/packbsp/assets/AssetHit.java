@@ -46,6 +46,10 @@ public class AssetHit {
         return source;
     }
 
+    @Override
+    public String toString() {
+        return "AssetHit{" + "source=" + source + ", path=" + path + "}";
+    }
     
     @Override
     public boolean equals(Object obj) {

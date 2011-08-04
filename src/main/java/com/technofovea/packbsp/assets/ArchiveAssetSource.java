@@ -195,5 +195,9 @@ public class ArchiveAssetSource implements AssetSource {
         return baseFile;
     }
 
-
+    @Override
+    public String toString() {
+        return "ArchiveAssetSource{" + " baseFile=" + baseFile + ", prefix=" + prefix + "}";
+    }
+    
 }

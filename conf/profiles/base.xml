@@ -14,10 +14,28 @@
            http://www.springframework.org/schema/aop
            http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 
-
-    <bean id="test" class="java.lang.String">
-    <constructor-arg value="${greeting}"/>    
+    <bean id="chosen-game" factory-bean="game-phase" factory-method="getActiveGame" />
+    <bean id="hllib" class="com.technofovea.hllib.HlLib" factory-method="getLibrary" />
+    
+    <bean id="game-info-loader" class="com.technofovea.packbsp.spring.GameInfoLoader">
+        <property name="game" ref="chosen-game"/>
     </bean>
     
+    <bean id="default-asset-locator" class="com.technofovea.packbsp.assets.BasicLocator">
+        <constructor-arg>
+            <bean factory-bean="game-info-loader" factory-method="load"/>
+        </constructor-arg>
+        <constructor-arg>
+            <bean class="java.io.File">
+            <constructor-arg><bean factory-bean="steam-phase" factory-method="getSteamDir"/></constructor-arg>
+            <constructor-arg value="steamapps"/>
+            </bean>
+        </constructor-arg>
+        <constructor-arg>
+            <bean factory-bean="steam-phase" factory-method="getRegistry"/>
+        </constructor-arg>
+        <constructor-arg ref="hllib"/>
+    </bean>
+
     
 </beans>

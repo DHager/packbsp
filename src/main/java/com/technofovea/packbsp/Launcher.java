@@ -3,14 +3,17 @@
  */
 package com.technofovea.packbsp;
 
+import com.technofovea.packbsp.assets.AssetLocator;
+import com.technofovea.packbsp.assets.BasicLocator;
 import com.technofovea.packbsp.conf.Profile;
 import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.spring.ExceptionLocalizer;
 import com.technofovea.packbsp.spring.GamePhaseUpdater;
 import com.technofovea.packbsp.spring.KitLoader;
-import com.technofovea.packbsp.spring.PackbspApplicationContext;
+import com.technofovea.packbsp.spring.GameContextBuilder;
 import com.technofovea.packbsp.spring.PhaseFailedException;
 import com.technofovea.packbsp.spring.ProfileLoader;
+import com.technofovea.packbsp.spring.ProfileState;
 import com.technofovea.packbsp.spring.SteamPhaseUpdater;
 import java.io.File;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ public class Launcher {
         protected KitLoader kitLoader;
         protected GamePhaseUpdater gameUpdater;
         protected ProfileLoader profileLoader;
+        protected ProfileState profileState;
 
         public void afterPropertiesSet() throws Exception {
             Assert.notNull(localizer);
@@ -44,6 +48,7 @@ public class Launcher {
             Assert.notNull(kitLoader);
             Assert.notNull(gameUpdater);
             Assert.notNull(profileLoader);
+            Assert.notNull(profileState);
         }
 
         public void go() throws PhaseFailedException {
@@ -56,11 +61,15 @@ public class Launcher {
 
                 Profile p = profiles.get(0);
                 for (DetectedGame g : games) {
-                    if (g.getParentKit().getId().equalsIgnoreCase(p.getDevkit())) {
+                    if (g.getName().contains("Fortress")) {
                         gameUpdater.updatePhase(g, p);
                         break;
                     }
                 }
+
+                AssetLocator temp = profileState.getGameContext().getBean("default-asset-locator", AssetLocator.class);
+                System.out.println(temp.locate("particles/bigboom.pcf"));
+
             }
             catch (PhaseFailedException ex) {
                 throw localizer.localize(ex);
@@ -106,12 +115,20 @@ public class Launcher {
         public void setProfileLoader(ProfileLoader profileLoader) {
             this.profileLoader = profileLoader;
         }
+
+        public ProfileState getProfileState() {
+            return profileState;
+        }
+
+        public void setProfileState(ProfileState profileState) {
+            this.profileState = profileState;
+        }
     }
 
     public static void main(String[] args) throws Exception {
         List<String> beanPaths = new ArrayList<String>();
         beanPaths.add("core.xml");
-        ApplicationContext ctx = PackbspApplicationContext.createRoot(beanPaths, new File("conf"));
+        ApplicationContext ctx = GameContextBuilder.createRoot(beanPaths, new File("conf"));
         ctx.getBean("launcher", LauncherTest.class).go();
 
     }

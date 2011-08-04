@@ -17,15 +17,9 @@ import org.springframework.core.io.ResourceLoader;
  *
  * @author Darien Hager
  */
-public class PackbspApplicationContext extends GenericApplicationContext {
-
-    protected PackbspApplicationContext(ApplicationContext parent) {
-        super(parent);
-    }
-
-    protected PackbspApplicationContext() {
-    }
-
+public class GameContextBuilder {
+    
+    
     protected static Resource[] pathsToResources(ResourceLoader loader, List<String> paths) {
         List<Resource> ret = new ArrayList<Resource>(paths.size());
         for (String p : paths) {
@@ -34,11 +28,11 @@ public class PackbspApplicationContext extends GenericApplicationContext {
         return ret.toArray(new Resource[ret.size()]);
     }
 
-    public static PackbspApplicationContext createRoot(List<String> beanPaths, File confdir) {
+    public static ApplicationContext createRoot(List<String> beanPaths, File confdir) {
         HybridResourceLoader loader = new HybridResourceLoader();
         loader.setRelativeFile(confdir);
 
-        PackbspApplicationContext ctx = new PackbspApplicationContext();
+        GenericApplicationContext ctx = new GenericApplicationContext();
         ctx.setResourceLoader(loader);
 
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
@@ -63,8 +57,8 @@ public class PackbspApplicationContext extends GenericApplicationContext {
 
     }
 
-    public static PackbspApplicationContext create(List<String> beanPaths, List<String> propertyPaths, ApplicationContext parent) {
-        PackbspApplicationContext ctx = new PackbspApplicationContext(parent);
+    public static ApplicationContext createGameContext(List<String> beanPaths, List<String> propertyPaths, ApplicationContext parent) {
+        GenericApplicationContext ctx = new GenericApplicationContext(parent);
         ctx.setResourceLoader(parent);
         
         XmlBeanDefinitionReader xmlReader = new XmlBeanDefinitionReader(ctx);
