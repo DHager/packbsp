@@ -82,11 +82,19 @@
     State-holding beans
     -->
     
+    <!-- Steam directory being picked -->
     <bean id="steam-phase" class="com.technofovea.packbsp.spring.SteamStateImpl">
-        <!-- Changes to the phase-holder will cause the linked scope to reset -->
         <property name="linkedScope" ref="steam-scope"/>
     </bean>
+    
+    <!-- Game and profile being picked -->
     <bean id="game-phase" class="com.technofovea.packbsp.spring.GameStateImpl">
+        <!-- Changes to the phase-holder will cause the linked scope to reset -->
+        <property name="linkedScope" ref="game-scope"/>
+    </bean>
+    
+    <!-- Results of profile loading -->
+    <bean id="profile-phase" class="com.technofovea.packbsp.spring.ProfileStateImpl">
         <!-- Changes to the phase-holder will cause the linked scope to reset -->
         <property name="linkedScope" ref="game-scope"/>
     </bean>
@@ -101,6 +109,8 @@
         <property name="gameUpdater" ref="game-phase-updater"/>
         <property name="kitLoader" ref="devkit-loader"/>
         <property name="profileLoader" ref="profile-loader"/>
+        <property name="profileState" ref="profile-phase"/>
+
     </bean>
 
  
@@ -130,7 +140,8 @@
     <bean id="game-phase-updater" class="com.technofovea.packbsp.spring.GamePhaseUpdater">
         <property name="localizer" ref="exceptionLocalizer"/>
         <property name="sourceState" ref="steam-phase"/>
-        <property name="targetState" ref="game-phase"/>
+        <property name="gameState" ref="game-phase"/>
+        <property name="profileState" ref="profile-phase"/>
     </bean>
     
     

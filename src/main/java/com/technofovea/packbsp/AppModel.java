@@ -44,10 +44,10 @@ import com.technofovea.packbsp.crawling.EmptyCrawlListener;
 import com.technofovea.packbsp.crawling.Node;
 import com.technofovea.packbsp.crawling.TraversalException;
 import com.technofovea.packbsp.crawling.nodes.MapNode;
+import com.technofovea.packbsp.devkits.DefaultGameImpl;
 import com.technofovea.packbsp.devkits.Devkit;
 import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.packaging.BspZipController;
-import com.technofovea.packbsp.spring.GameInfoDataImpl;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -380,7 +380,8 @@ public class AppModel {
         }
 
         // Make locator
-        BasicLocator baseLocator = new BasicLocator(GameInfoDataImpl.createFromReader(_gameInfoData), new File(_steamDirectory, "steamapps"), _reg, hllib);
+        assert(_chosenGame instanceof DefaultGameImpl); // True for now, and later we will retire this class.
+        BasicLocator baseLocator = new BasicLocator((DefaultGameImpl)_chosenGame, new File(_steamDirectory, "steamapps"), _reg, hllib);
         MapFirstLocator realLocator;
         try {
             realLocator = new MapFirstLocator(baseLocator, hllib, _sourceCopy);

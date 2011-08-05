@@ -22,7 +22,7 @@ public class DefaultGameImpl implements DetectedGame {
     GameConfigReader.Game gcData;
     File infoFile;
     GameInfoReader giReader;
-
+   
     protected DefaultGameImpl(){
         
     }
@@ -53,6 +53,23 @@ public class DefaultGameImpl implements DetectedGame {
 
     public File getKitBinDir() {
         return engineBinDir;
+    }
+    
+    
+    public int getAppId() {
+        return giReader.getSteamAppId();
+    }
+
+    public List<Integer> getExtraIds() {
+        return giReader.getAdditionalIds();
+    }
+
+    public List<String> getSearchPaths() {
+        return giReader.getSearchPaths();
+    }
+
+    public File getSource() {
+        return giReader.getSourceFile();
     }
 
     @Override

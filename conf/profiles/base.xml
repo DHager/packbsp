@@ -17,14 +17,8 @@
     <bean id="chosen-game" factory-bean="game-phase" factory-method="getActiveGame" />
     <bean id="hllib" class="com.technofovea.hllib.HlLib" factory-method="getLibrary" />
     
-    <bean id="game-info-loader" class="com.technofovea.packbsp.spring.GameInfoLoader">
-        <property name="game" ref="chosen-game"/>
-    </bean>
-    
     <bean id="default-asset-locator" class="com.technofovea.packbsp.assets.BasicLocator">
-        <constructor-arg>
-            <bean factory-bean="game-info-loader" factory-method="load"/>
-        </constructor-arg>
+        <constructor-arg ref="chosen-game"/>
         <constructor-arg>
             <bean class="java.io.File">
             <constructor-arg><bean factory-bean="steam-phase" factory-method="getSteamDir"/></constructor-arg>
