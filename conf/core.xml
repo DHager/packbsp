@@ -107,6 +107,7 @@
         <property name="localizer" ref="exceptionLocalizer"/>
         <property name="steamUpdater" ref="steam-phase-updater"/>
         <property name="gameUpdater" ref="game-phase-updater"/>
+        <property name="gameState" ref="game-phase"/>
         <property name="kitLoader" ref="devkit-loader"/>
         <property name="profileLoader" ref="profile-loader"/>
         <property name="profileState" ref="profile-phase"/>

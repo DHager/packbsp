@@ -3,7 +3,6 @@
  */
 package com.technofovea.packbsp.spring;
 
-import com.technofovea.packbsp.crawling2.GraphExplorer;
 import org.springframework.context.ApplicationContext;
 
 /**
@@ -13,12 +12,12 @@ import org.springframework.context.ApplicationContext;
 public interface ProfileState extends BasicState {
     
 
-    public GraphExplorer getExplorer();
-
     public ApplicationContext getGameContext();
 
-    void setExplorer(GraphExplorer explorer);
+    public void setGameContext(ApplicationContext gameContext);
+    
+    public GraphStarterChoice getGraphStarter();
 
-    void setGameContext(ApplicationContext gameContext);
+    public void setGraphStarter(GraphStarterChoice stater);
     
 }

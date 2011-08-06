@@ -3,20 +3,22 @@
  */
 package com.technofovea.packbsp;
 
-import com.technofovea.packbsp.assets.AssetLocator;
-import com.technofovea.packbsp.assets.BasicLocator;
 import com.technofovea.packbsp.conf.Profile;
 import com.technofovea.packbsp.devkits.DetectedGame;
 import com.technofovea.packbsp.spring.ExceptionLocalizer;
 import com.technofovea.packbsp.spring.GamePhaseUpdater;
 import com.technofovea.packbsp.spring.KitLoader;
 import com.technofovea.packbsp.spring.GameContextBuilder;
+import com.technofovea.packbsp.spring.GameState;
+import com.technofovea.packbsp.spring.GraphStarterChoice;
 import com.technofovea.packbsp.spring.PhaseFailedException;
 import com.technofovea.packbsp.spring.ProfileLoader;
 import com.technofovea.packbsp.spring.ProfileState;
 import com.technofovea.packbsp.spring.SteamPhaseUpdater;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import org.slf4j.Logger;
@@ -39,6 +41,7 @@ public class Launcher {
         protected SteamPhaseUpdater steamUpdater;
         protected KitLoader kitLoader;
         protected GamePhaseUpdater gameUpdater;
+        protected GameState gameState;
         protected ProfileLoader profileLoader;
         protected ProfileState profileState;
 
@@ -47,6 +50,7 @@ public class Launcher {
             Assert.notNull(steamUpdater);
             Assert.notNull(kitLoader);
             Assert.notNull(gameUpdater);
+            Assert.notNull(gameState);
             Assert.notNull(profileLoader);
             Assert.notNull(profileState);
         }
@@ -67,8 +71,15 @@ public class Launcher {
                     }
                 }
 
-                AssetLocator temp = profileState.getGameContext().getBean("default-asset-locator", AssetLocator.class);
-                System.out.println(temp.locate("particles/bigboom.pcf"));
+                //AssetLocator temp = profileState.getGameContext().getBean("default-asset-locator", AssetLocator.class);
+                //System.out.println(temp.locate("particles/bigboom.pcf"));
+                
+                final GraphStarterChoice graphStarter = profileState.getGraphStarter();
+                Set<File> maps = new HashSet<File>();
+                File[] foundMaps =  gameState.getActiveGame().getBspDir().listFiles(graphStarter.getFileFilter());
+                maps.addAll(Arrays.asList(foundMaps));
+                profileState.getGraphStarter().setChoices(maps);
+                
 
             }
             catch (PhaseFailedException ex) {
@@ -123,6 +134,15 @@ public class Launcher {
         public void setProfileState(ProfileState profileState) {
             this.profileState = profileState;
         }
+
+        public GameState getGameState() {
+            return gameState;
+        }
+
+        public void setGameState(GameState gameState) {
+            this.gameState = gameState;
+        }
+        
     }
 
     public static void main(String[] args) throws Exception {

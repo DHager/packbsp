@@ -27,7 +27,7 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
     protected SteamState sourceState;
     protected GameState gameState;
     protected ProfileState profileState;
-    
+
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         parentContext = applicationContext;
     }
@@ -52,21 +52,28 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
             if (!chosenGame.getParentKit().getId().equalsIgnoreCase(chosenProfile.getDevkit())) {
                 throw new PhaseFailedException("Selected profile is not valid for this game").addLocalization("error.input.mismatched_profile");
             }
-            
-            
+
+
             /*
              * GameState must be updated before loading child context or beans
              * in the child context won't have important environment information.
-             */            
+             */
             gameState.setActiveGame(chosenGame);
             gameState.setActiveProfile(chosenProfile);
-            
 
-            ApplicationContext child = initChildContext(chosenProfile);
+
+            final ApplicationContext child = initChildContext(chosenProfile);
+            final GraphStarterChoice starter; 
+            try {
+                starter = child.getBean("graph-starter", GraphStarterChoice.class);
+            }catch (BeansException e) {
+                logger.error("Error instantiating profile", e);
+                throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading", chosenProfile.getName());
+            }
 
             // Pull out expected beans
             profileState.setGameContext(child);
-            profileState.setExplorer(null); //TODO
+            profileState.setGraphStarter(starter);
             //Modify target state
         }
         catch (PhaseFailedException ex) {
@@ -83,11 +90,12 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
         try {
             return GameContextBuilder.createGameContext(beanPaths, propPaths, parentContext);
         }
-        catch (BeanDefinitionStoreException e) {
+        catch (BeansException e) {
             logger.error("Error instantiating profile", e);
-            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading",chosenProfile.getName());
+            throw new PhaseFailedException("Error instantiating profile", e).addLocalization("error.profile_loading", chosenProfile.getName());
         }
     }
+
     public SteamState getSourceState() {
         return sourceState;
     }
@@ -111,7 +119,4 @@ public class GamePhaseUpdater extends AbstractPackbspComponent implements Applic
     public void setProfileState(ProfileState profileState) {
         this.profileState = profileState;
     }
-
-
-    
 }

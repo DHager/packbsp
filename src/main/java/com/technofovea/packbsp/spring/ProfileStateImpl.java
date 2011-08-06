@@ -13,33 +13,27 @@ import org.springframework.context.ApplicationContext;
 public class ProfileStateImpl extends AbstractState implements ProfileState {
 
     protected ApplicationContext gameContext;
-    protected GraphExplorer explorer;
+    protected GraphStarterChoice graphStarter;
 
     public boolean isComplete() {
-        return ((gameContext != null )
+        return ( ( gameContext != null )
                 && ( gameContext != null )
-                && ( explorer != null ));
-    }
-    
-    @Override
-    public GraphExplorer getExplorer() {
-        return explorer;
+                && ( graphStarter != null ) );
     }
 
-    @Override
-    public void setExplorer(GraphExplorer explorer) {
-        this.explorer = explorer;
-    }
-
-    @Override
     public ApplicationContext getGameContext() {
         return gameContext;
     }
 
-    @Override
     public void setGameContext(ApplicationContext gameContext) {
         this.gameContext = gameContext;
     }
-    
-    
+
+    public GraphStarterChoice getGraphStarter() {
+        return graphStarter;
+    }
+
+    public void setGraphStarter(GraphStarterChoice graphStarter) {
+        this.graphStarter = graphStarter;
+    }
 }

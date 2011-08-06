@@ -30,6 +30,7 @@
         </constructor-arg>
         <constructor-arg ref="hllib"/>
     </bean>
-
+    
+    <bean id="graph-starter" class="com.technofovea.packbsp.spring.BspGraphStarter"/>
     
 </beans>
