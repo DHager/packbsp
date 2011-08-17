@@ -10,25 +10,16 @@ package com.technofovea.packbsp.crawling2;
 public class BasicEdge implements Edge {
 
     protected boolean implicit;
-    protected Layer layer;
     protected String description;
 
-    public BasicEdge(Layer layer){
-        this(layer,false,"");
+    public BasicEdge(){
+        this(false,"");
     }
     
-    public BasicEdge(Layer layer, boolean implicit, String description) {
+    public BasicEdge(boolean implicit, String description) {
         this.implicit = implicit;
-        this.layer = layer;
         this.description = description;
     }
-
-    public BasicEdge(Layer layer, String description) {
-        this(layer,false,description);
-    }
-    
-    
-    
 
     public boolean isImplicit() {
         return implicit;
@@ -38,10 +29,6 @@ public class BasicEdge implements Edge {
         final boolean prev = this.implicit;
         this.implicit = implicit;
         return prev;
-    }
-
-    public Layer getLayer() {
-        return layer;
     }
 
     public String getDescription() {

@@ -1,6 +1,3 @@
-/*
- * 
- */
 package com.technofovea.packbsp.crawling2;
 
 import com.technofovea.packbsp.assets.AssetHit;
@@ -12,8 +9,14 @@ import com.technofovea.packbsp.assets.AssetHit;
  * 
  * @author Darien Hager
  */
-public interface RelativeAssetNode<V extends LocatedAssetNode> {
+public abstract class RelativeAssetNode<N extends Node> implements Node{
 
+    protected String path;
+
+    public RelativeAssetNode(String path) {
+        this.path = path;
+    }
+    
     /**
      * Returns the path, ex. "materials/foo/bar.vmt". 
      * 
@@ -22,7 +25,9 @@ public interface RelativeAssetNode<V extends LocatedAssetNode> {
      * 
      * @return The path associated with this node
      */
-    public String getPath();
+    public String getPath(){
+        return path;
+    }
     
     /**
      * A factory method to instantiate a non-relative version of this node when given
@@ -30,5 +35,5 @@ public interface RelativeAssetNode<V extends LocatedAssetNode> {
      * @param hit The discovered asset
      * @return The new located node
      */
-    public V createLocatedNode(AssetHit hit);
+    public abstract N createLocatedNode(AssetHit hit);
 }

@@ -17,9 +17,4 @@ public interface Edge {
     public boolean isImplicit();
     public boolean setImplicit(boolean implicit);
     
-    /**
-     * Retrieve the layer that this edge exists within.
-     * @return 
-     */
-    public Layer getLayer();
 }
